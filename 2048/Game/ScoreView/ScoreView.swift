@@ -29,6 +29,7 @@ struct ScoreView: View {
         .frame(minWidth: minWidth)
         .padding(textPadding)
         .background(Color.fieldForeground)
+        .cornerRadius(.CornerRadius.score)
     }
 }
 

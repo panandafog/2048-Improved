@@ -16,6 +16,7 @@ struct CellView: View {
         GeometryReader{ geometry in
             ZStack {
                 Rectangle()
+                    .cornerRadius(.CornerRadius.fieldCell)
                     .foregroundColor(Color.cellForeground(value))
                 if let value = value {
                     Text(String(value))

@@ -47,6 +47,7 @@ struct FieldView: View {
             }
         }
         .background(Color.fieldForeground)
+        .cornerRadius(10)
     }
 }
 
