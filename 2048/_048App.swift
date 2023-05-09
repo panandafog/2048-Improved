@@ -16,5 +16,16 @@ struct _048App: App {
             ContentView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
+//        .windowResizabilityContentSize()
     }
+}
+
+extension Scene {
+//    func windowResizabilityContentSize() -> some Scene {
+//        if #available(macOS 13.0, *) {
+//            return windowResizability(.contentSize)
+//        } else {
+//            return self
+//        }
+//    }
 }
