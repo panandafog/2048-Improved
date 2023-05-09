@@ -38,6 +38,6 @@ struct FieldCellView: View {
 
 struct CellView_Previews: PreviewProvider {
     static var previews: some View {
-        CellView(value: 2)
+        FieldCellView(value: 2)
     }
 }
