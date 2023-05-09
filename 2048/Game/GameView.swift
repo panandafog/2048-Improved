@@ -64,11 +64,35 @@ struct GameView: View {
                 do {
                     try game.startNewGame()
                 } catch {
-                    fatalError("Can't start the game")
+                    print("Can't start the game")
                 }
             }
             Button("Cancel", role: .cancel) {
                 game.cancelNewGame()
+            }
+        }
+        .alert(
+            "Victory!!! 🎉🎉🎉",
+            isPresented: $game.victory
+        ) {
+            Button("Start new game", role: .cancel) {
+                do {
+                    try game.startNewGame()
+                } catch {
+                    print("Can't start the game")
+                }
+            }
+        }
+        .alert(
+            "You lose 🥲",
+            isPresented: $game.lose
+        ) {
+            Button("Start new game", role: .cancel) {
+                do {
+                    try game.startNewGame()
+                } catch {
+                    print("Can't start the game")
+                }
             }
         }
         .frame(

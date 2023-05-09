@@ -13,6 +13,9 @@ class GameModel: ObservableObject {
     var field: Field
     
     @Published var score: Int = 0
+    @Published var victory = false
+    @Published var lose = false
+    
     @Published var bestScore: Int = ScoreRepository.bestScore {
         didSet {
             ScoreRepository.bestScore = bestScore
@@ -20,11 +23,15 @@ class GameModel: ObservableObject {
     }
     @Published var newGameRequested = false
     
+    var gameEnded: Bool {
+        victory || lose
+    }
+    
     private (set) var fieldSize: Int
     
-    init(fieldSize: Int = 4) {
+    init(fieldSize: Int = 4, winValue: Int = 2048) {
         self.fieldSize = fieldSize
-        field = .init(fieldSize: fieldSize)
+        field = .init(fieldSize: fieldSize, winValue: winValue)
     }
     
     func start() throws {
@@ -33,13 +40,19 @@ class GameModel: ObservableObject {
     }
     
     func move(_ direction: MoveDirection) {
+        guard !gameEnded else {
+            return
+        }
         do {
             try score += field.move(direction)
             bestScore = max(score, bestScore)
+            if field.isFull { lose = true }
+        } catch GameError.win {
+            victory = true
         } catch GameError.cantMove {
             print("cantMove")
         } catch GameError.noFreeSpace {
-            print("noFreeSpace")
+            lose = true
         } catch {}
     }
     

@@ -10,4 +10,5 @@ import Foundation
 enum GameError: Error {
     case noFreeSpace
     case cantMove
+    case win
 }

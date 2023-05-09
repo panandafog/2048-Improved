@@ -11,6 +11,7 @@ class Field: ObservableObject {
     
     private (set) var cells = Set<FieldCell>()
     let fieldSize: Int
+    let winValue: Int
     
     var emptyCoordinates: [Coordinate] {
         var coordinates: [Coordinate] = []
@@ -26,8 +27,13 @@ class Field: ObservableObject {
         Int(pow(2.0, Double(Int.random(in: 1...2))))
     }
     
-    init(fieldSize: Int) {
+    var isFull: Bool {
+        cells.count >= fieldSize * fieldSize
+    }
+    
+    init(fieldSize: Int, winValue: Int) {
         self.fieldSize = fieldSize
+        self.winValue = winValue
     }
     
     func getCell(at coordinate: Coordinate) -> FieldCell? {
@@ -56,11 +62,9 @@ class Field: ObservableObject {
     }
     
     func move(_ direction: MoveDirection) throws -> Int {
-        guard let mergedSum = moveCells(direction) else {
-            throw GameError.cantMove
-        }
-        
+        let mergedSum = try moveCells(direction)
         try generateNewCell()
+        
         objectWillChange.send()
         return mergedSum
     }
@@ -69,8 +73,9 @@ class Field: ObservableObject {
         cells = []
     }
     
-    private func moveCells(_ direction: MoveDirection) -> Int? {
+    private func moveCells(_ direction: MoveDirection) throws -> Int {
         var moved = false
+        var win = false
         var mergedSum = 0
         var mergedCellsIDs: Set<UUID> = []
         
@@ -119,7 +124,12 @@ class Field: ObservableObject {
                                 && !mergedCellsIDs.contains(searchCell.id) {
                                 // merge cells
                                 cells.remove(searchCell)
+                                
                                 currentCell.value *= 2
+                                if currentCell.value >= winValue {
+                                    win = true
+                                }
+                                
                                 currentCell.coordinate = searchCell.coordinate
                                 mergedCellsIDs.insert(currentCell.id)
                                 moved = true
@@ -142,7 +152,15 @@ class Field: ObservableObject {
                 }
             }
         }
-        return moved ? mergedSum : nil
+        
+        guard moved else {
+            throw GameError.cantMove
+        }
+        guard !win else {
+            throw GameError.win
+        }
+        
+        return mergedSum
     }
     
 //    private func moveUp() -> Bool {
