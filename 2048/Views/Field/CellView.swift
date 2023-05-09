@@ -7,13 +7,13 @@
 
 import SwiftUI
 
-struct CellView: View {
+struct FieldCellView: View {
     var value: Int?
     
     private let fontMultiplier = 0.4
     
     var body: some View {
-        GeometryReader{ geometry in
+        GeometryReader { geometry in
             ZStack {
                 Rectangle()
                     .cornerRadius(.CornerRadius.fieldCell)

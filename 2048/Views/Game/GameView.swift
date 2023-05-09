@@ -39,7 +39,6 @@ struct GameView: View {
                     width: fieldSize,
                     height: Self.scoreStackHeight
                 )
-//                .background(Color.blue)
                 
                 FieldView(game: game)
                     .frame(width: fieldSize, height: fieldSize)
@@ -58,7 +57,6 @@ struct GameView: View {
                     width: fieldSize,
                     height: Self.bottomStackHeight
                 )
-//                .background(Color.blue)
             }
             .position(
                 x: geometry.frame(in: .local).midX,

@@ -21,7 +21,7 @@ struct FieldView: View {
             
             ForEach(0 ..< game.field.fieldSize) { rowInd in
                 ForEach(0 ..< game.field.fieldSize) { colInd in
-                    CellView(value: nil)
+                    FieldCellView(value: nil)
                         .position(
                             x: Self.indent * CGFloat(colInd + 1) + cellWidth * (CGFloat(colInd) + 0.5),
                             y: Self.indent * CGFloat(rowInd + 1) + cellHeight * (CGFloat(rowInd) + 0.5)
@@ -33,7 +33,7 @@ struct FieldView: View {
             ForEach(cells, id: \.self) { cell in
                 let rowInd = cell.coordinate.row
                 let colInd = cell.coordinate.col
-                CellView(value: cell.value)
+                FieldCellView(value: cell.value)
                     .position(
                         x: Self.indent * CGFloat(colInd + 1) + cellWidth * (CGFloat(colInd) + 0.5),
                         y: Self.indent * CGFloat(rowInd + 1) + cellHeight * (CGFloat(rowInd) + 0.5)
