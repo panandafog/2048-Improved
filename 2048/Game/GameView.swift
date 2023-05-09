@@ -11,9 +11,9 @@ struct GameView: View {
     @StateObject var game = GameModel()
     @Binding var showHowToPlay: Bool
     
-    private static let verticalSpacing: CGFloat = 2
-    private static let scoreStackHeight: CGFloat = 70
-    private static let bottomStackHeight: CGFloat = 70
+    private static let verticalSpacing: CGFloat = 10
+    private static let scoreStackHeight: CGFloat = 60
+    private static let bottomStackHeight: CGFloat = 60
     private static let maxFieldSize: CGFloat = 500
     private static let minFieldSize: CGFloat = 300
     
@@ -30,6 +30,7 @@ struct GameView: View {
                 )
                 
                 HStack {
+                    TitleView()
                     Spacer()
                     ScoreView(kind: .current, value: game.score)
                     ScoreView(kind: .best, value: game.bestScore)
@@ -38,6 +39,7 @@ struct GameView: View {
                     width: fieldSize,
                     height: Self.scoreStackHeight
                 )
+//                .background(Color.blue)
                 
                 FieldView(game: game)
                     .frame(width: fieldSize, height: fieldSize)
@@ -56,6 +58,7 @@ struct GameView: View {
                     width: fieldSize,
                     height: Self.bottomStackHeight
                 )
+//                .background(Color.blue)
             }
             .position(
                 x: geometry.frame(in: .local).midX,

@@ -17,12 +17,12 @@ struct ScoreView: View {
     var body: some View {
         VStack {
             Text(kind.title)
-                .font(.title3)
+                .font(.headline)
                 .textCase(.uppercase)
                 .foregroundColor(.labelLight2)
                 .padding([.top, .horizontal], textPadding)
             Text(String(value))
-                .font(.title)
+                .font(.title2)
                 .foregroundColor(.labelLight)
                 .padding([.bottom, .horizontal], textPadding)
         }
