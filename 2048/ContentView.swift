@@ -15,6 +15,8 @@ struct ContentView: View {
         sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
         animation: .default)
     private var items: FetchedResults<Item>
+    
+    @State var showHowToPlay = false
 
     var body: some View {
 //        NavigationView {
@@ -43,11 +45,15 @@ struct ContentView: View {
 //            Text("Select an item")
 //        }
         
-        HStack{
+        HStack {
             Spacer()
-            VStack{
+            VStack {
                 Spacer()
-                GameView()
+                GameView(showHowToPlay: $showHowToPlay)
+                if showHowToPlay {
+                    Divider()
+                    HowToPlayView()
+                }
                 Spacer()
             }
             Spacer()

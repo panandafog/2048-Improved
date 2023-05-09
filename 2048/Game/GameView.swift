@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct GameView: View {
-    @ObservedObject var game = GameModel()
+    @StateObject var game = GameModel()
+    @Binding var showHowToPlay: Bool
     
     private static let verticalSpacing: CGFloat = 2
     private static let scoreStackHeight: CGFloat = 70
@@ -42,7 +43,12 @@ struct GameView: View {
                     .frame(width: fieldSize, height: fieldSize)
                 
                 HStack {
-                    Spacer()
+                    Button("How to play", action: {
+                        withAnimation {
+                            showHowToPlay.toggle()
+                        }
+                    })
+                        .buttonStyle(HowToPlayButton())
                     Button("New Game", action: { game.requestNewGame() })
                         .buttonStyle(GameButton())
                 }
@@ -146,14 +152,6 @@ struct GameView: View {
 
 struct GameView_Previews: PreviewProvider {
     static var previews: some View {
-        GameView()
-    }
-}
-
-struct ViewWidthKey: PreferenceKey {
-    typealias Value = CGFloat
-    static var defaultValue = CGFloat.zero
-    static func reduce(value: inout Value, nextValue: () -> Value) {
-        value += nextValue()
+        GameView(showHowToPlay: .init(get: { true }, set: { _ in }))
     }
 }

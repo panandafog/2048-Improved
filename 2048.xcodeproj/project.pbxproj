@@ -25,6 +25,8 @@
 		0B737F022A068234009602AF /* MoveDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B737F012A068234009602AF /* MoveDirection.swift */; };
 		0B86CD2E2A0A81CB0034B82E /* GameButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B86CD2D2A0A81CB0034B82E /* GameButton.swift */; };
 		0B86CD302A0A8A8B0034B82E /* ScoreRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B86CD2F2A0A8A8B0034B82E /* ScoreRepository.swift */; };
+		0B86CD332A0A957A0034B82E /* HowToPlayButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B86CD322A0A957A0034B82E /* HowToPlayButton.swift */; };
+		0B86CD352A0A966B0034B82E /* HowToPlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B86CD342A0A966B0034B82E /* HowToPlayView.swift */; };
 		0BDF44C22A08511C00FC5B54 /* Color+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDF44C12A08511C00FC5B54 /* Color+Extensions.swift */; };
 		0BDF44C62A08724000FC5B54 /* Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDF44C52A08724000FC5B54 /* Binding.swift */; };
 		0BDF44CA2A08F17B00FC5B54 /* ScoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDF44C92A08F17B00FC5B54 /* ScoreView.swift */; };
@@ -52,6 +54,8 @@
 		0B737F012A068234009602AF /* MoveDirection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveDirection.swift; sourceTree = "<group>"; };
 		0B86CD2D2A0A81CB0034B82E /* GameButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameButton.swift; sourceTree = "<group>"; };
 		0B86CD2F2A0A8A8B0034B82E /* ScoreRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreRepository.swift; sourceTree = "<group>"; };
+		0B86CD322A0A957A0034B82E /* HowToPlayButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HowToPlayButton.swift; sourceTree = "<group>"; };
+		0B86CD342A0A966B0034B82E /* HowToPlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HowToPlayView.swift; sourceTree = "<group>"; };
 		0BDF44C12A08511C00FC5B54 /* Color+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Extensions.swift"; sourceTree = "<group>"; };
 		0BDF44C52A08724000FC5B54 /* Binding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Binding.swift; sourceTree = "<group>"; };
 		0BDF44C92A08F17B00FC5B54 /* ScoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreView.swift; sourceTree = "<group>"; };
@@ -124,7 +128,9 @@
 				0B737F012A068234009602AF /* MoveDirection.swift */,
 				0B68339E2A06C28600DB9601 /* Field.swift */,
 				0B86CD2D2A0A81CB0034B82E /* GameButton.swift */,
+				0B86CD322A0A957A0034B82E /* HowToPlayButton.swift */,
 				0B86CD2F2A0A8A8B0034B82E /* ScoreRepository.swift */,
+				0B86CD342A0A966B0034B82E /* HowToPlayView.swift */,
 			);
 			path = Game;
 			sourceTree = "<group>";
@@ -224,12 +230,14 @@
 				0BDF44C62A08724000FC5B54 /* Binding.swift in Sources */,
 				0B737EF82A058947009602AF /* CellChange.swift in Sources */,
 				0B737EE22A058331009602AF /* _048.xcdatamodeld in Sources */,
+				0B86CD332A0A957A0034B82E /* HowToPlayButton.swift in Sources */,
 				0B737EE42A058331009602AF /* ContentView.swift in Sources */,
 				0B737EDF2A058331009602AF /* Persistence.swift in Sources */,
 				0B737EFE2A05918D009602AF /* FieldView.swift in Sources */,
 				0B737EF12A0586EE009602AF /* GameView.swift in Sources */,
 				0BDF44CD2A08F1F300FC5B54 /* ScoreViewKind.swift in Sources */,
 				0B86CD302A0A8A8B0034B82E /* ScoreRepository.swift in Sources */,
+				0B86CD352A0A966B0034B82E /* HowToPlayView.swift in Sources */,
 				0B86CD2E2A0A81CB0034B82E /* GameButton.swift in Sources */,
 				0B737F002A06780E009602AF /* CellView.swift in Sources */,
 				0B737EFA2A058CE1009602AF /* Coordinate.swift in Sources */,
@@ -373,8 +381,8 @@
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
@@ -411,8 +419,8 @@
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";

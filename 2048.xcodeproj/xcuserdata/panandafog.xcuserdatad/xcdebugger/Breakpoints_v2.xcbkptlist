@@ -14,8 +14,8 @@
             filePath = "2048/Game/FieldView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "45"
-            endingLineNumber = "45"
+            startingLineNumber = "46"
+            endingLineNumber = "46"
             landmarkName = "body"
             landmarkType = "24">
             <Locations>
@@ -117,6 +117,150 @@
                   startingLineNumber = "134"
                   endingLineNumber = "134"
                   offsetFromSymbolStart = "3440">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "8DB3360E-2FE2-4B85-82A8-19F43D46DBBD"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "2048/Game/Field.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "163"
+            endingLineNumber = "163"
+            landmarkName = "moveCells(_:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "8DB3360E-2FE2-4B85-82A8-19F43D46DBBD - ab6213c3c7d4be3c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "_048.Field.moveCells(_048.MoveDirection) throws -&gt; Swift.Int"
+                  moduleName = "2048"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/panandafog/Software/2048/swift/2048/2048/Game/Field.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "163"
+                  endingLineNumber = "163"
+                  offsetFromSymbolStart = "4472">
+               </Location>
+               <Location
+                  uuid = "8DB3360E-2FE2-4B85-82A8-19F43D46DBBD - ab6213c3c7d4be3c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "_048.Field.moveCells(_048.MoveDirection) throws -&gt; Swift.Int"
+                  moduleName = "2048"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/panandafog/Software/2048/swift/2048/2048/Game/Field.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "163"
+                  endingLineNumber = "163"
+                  offsetFromSymbolStart = "4448">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "0D63E501-17E5-480F-B336-543F5649A75C"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "2048/Game/GameView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "138"
+            endingLineNumber = "138"
+            landmarkName = "body"
+            landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "0D63E501-17E5-480F-B336-543F5649A75C - 29f721efe349dd12"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (__C.NSEvent) -&gt; Swift.Optional&lt;__C.NSEvent&gt; in closure #7 () -&gt; () in _048.GameView.body.getter : some"
+                  moduleName = "2048"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/panandafog/Software/2048/swift/2048/2048/Game/GameView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "140"
+                  endingLineNumber = "140"
+                  offsetFromSymbolStart = "140">
+               </Location>
+               <Location
+                  uuid = "0D63E501-17E5-480F-B336-543F5649A75C - b69dc9110a62400a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #7 () -&gt; () in _048.GameView.body.getter : some"
+                  moduleName = "2048"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/panandafog/Software/2048/swift/2048/2048/Game/GameView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "149"
+                  endingLineNumber = "149"
+                  offsetFromSymbolStart = "0">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7FFBFAB2-3906-42E2-A808-741F3CA107B5"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "2048/Game/GameView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "130"
+            endingLineNumber = "130"
+            landmarkName = "body"
+            landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "7FFBFAB2-3906-42E2-A808-741F3CA107B5 - 34f271de91999cc4"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #6 (SwiftUI.DragGesture.Value) -&gt; () in _048.GameView.body.getter : some"
+                  moduleName = "2048"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/panandafog/Software/2048/swift/2048/2048/Game/GameView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "132"
+                  endingLineNumber = "132"
+                  offsetFromSymbolStart = "520">
+               </Location>
+               <Location
+                  uuid = "7FFBFAB2-3906-42E2-A808-741F3CA107B5 - 34f271de91999cc4"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #6 (SwiftUI.DragGesture.Value) -&gt; () in _048.GameView.body.getter : some"
+                  moduleName = "2048"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/panandafog/Software/2048/swift/2048/2048/Game/GameView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "132"
+                  endingLineNumber = "132"
+                  offsetFromSymbolStart = "560">
                </Location>
             </Locations>
          </BreakpointContent>

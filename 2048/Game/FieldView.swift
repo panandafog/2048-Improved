@@ -10,7 +10,7 @@ import SwiftUI
 struct FieldView: View {
     static let indent: CGFloat = 10
     
-    @StateObject var game: GameModel
+    @ObservedObject var game: GameModel
     @State var cells: [FieldCell] = []
     
     var body: some View {
@@ -41,6 +41,7 @@ struct FieldView: View {
                     .frame(width: cellWidth, height: cellHeight)
             }
             .onReceive(game.field.objectWillChange) { newCells in
+
                 withAnimation {
                     cells = Array(game.field.cells)
                 }
