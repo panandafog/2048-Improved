@@ -41,7 +41,6 @@ struct FieldView: View {
                     .frame(width: cellWidth, height: cellHeight)
             }
             .onReceive(game.field.objectWillChange) { newCells in
-
                 withAnimation {
                     cells = Array(game.field.cells)
                 }

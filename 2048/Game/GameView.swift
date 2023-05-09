@@ -48,7 +48,7 @@ struct GameView: View {
                             showHowToPlay.toggle()
                         }
                     })
-                        .buttonStyle(HowToPlayButton())
+                    .buttonStyle(HowToPlayButton())
                     Button("New Game", action: { game.requestNewGame() })
                         .buttonStyle(GameButton())
                 }
@@ -134,8 +134,8 @@ struct GameView: View {
         .onAppear {
 #if os(macOS)
             NSEvent.addLocalMonitorForEvents(matching: .keyDown) { (event) -> NSEvent? in
-                if let moveDirection = MoveDirection(keyCode: event.keyCode) {
-                    game.move(moveDirection)
+                if let direction = MoveDirection(keyCode: event.keyCode) {
+                    game.move(direction)
                     return nil
                 }
                 return event

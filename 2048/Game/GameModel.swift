@@ -29,6 +29,12 @@ class GameModel: ObservableObject {
     
     private (set) var fieldSize: Int
     
+    private let calculationsQueue = DispatchQueue(
+        label: "game.concurrent.queue",
+        qos: .userInitiated,
+        attributes: .concurrent
+    )
+    
     init(fieldSize: Int = 4, winValue: Int = 2048) {
         self.fieldSize = fieldSize
         field = .init(fieldSize: fieldSize, winValue: winValue)
@@ -43,17 +49,23 @@ class GameModel: ObservableObject {
         guard !gameEnded else {
             return
         }
-        do {
-            try score += field.move(direction)
-            bestScore = max(score, bestScore)
-            if field.isFull { lose = true }
-        } catch GameError.win {
-            victory = true
-        } catch GameError.cantMove {
-            print("cantMove")
-        } catch GameError.noFreeSpace {
-            lose = true
-        } catch {}
+        
+        calculationsQueue.async { [self] in
+            do {
+                let moveScore = try field.move(direction)
+                DispatchQueue.main.async { [self] in
+                    score += moveScore
+                    bestScore = max(score, bestScore)
+                    if field.isFull { lose = true }
+                }
+            } catch GameError.win {
+                victory = true
+            } catch GameError.cantMove {
+                print("cantMove")
+            } catch GameError.noFreeSpace {
+                lose = true
+            } catch {}
+        }
     }
     
     func requestNewGame() {

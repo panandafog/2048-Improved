@@ -49,7 +49,9 @@ class Field: ObservableObject {
         }
         cells.insert(newCell)
         
-        objectWillChange.send()
+        DispatchQueue.main.async { [self] in
+            objectWillChange.send()
+        }
     }
     
     func generateNewCell() throws {
@@ -57,15 +59,12 @@ class Field: ObservableObject {
             throw GameError.noFreeSpace
         }
         setCell(FieldCell(value: newElementValue, coordinate: coordinate))
-        
-        objectWillChange.send()
     }
     
     func move(_ direction: MoveDirection) throws -> Int {
         let mergedSum = try moveCells(direction)
         try generateNewCell()
         
-        objectWillChange.send()
         return mergedSum
     }
     
