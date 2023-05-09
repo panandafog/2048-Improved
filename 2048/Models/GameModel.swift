@@ -59,11 +59,15 @@ class GameModel: ObservableObject {
                     if field.isFull { lose = true }
                 }
             } catch GameError.win {
-                victory = true
+                DispatchQueue.main.async { [self] in
+                    victory = true
+                }
             } catch GameError.cantMove {
                 print("cantMove")
             } catch GameError.noFreeSpace {
-                lose = true
+                DispatchQueue.main.async { [self] in
+                    lose = true
+                }
             } catch {}
         }
     }

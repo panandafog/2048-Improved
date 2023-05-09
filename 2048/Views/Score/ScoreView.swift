@@ -37,9 +37,9 @@ extension ScoreViewKind {
     var title: String {
         switch self {
         case .current:
-            return "Score"
+            return "Score".localized
         case .best:
-            return "Best"
+            return "Best".localized
         }
     }
 }

@@ -1,0 +1,33 @@
+/* 
+  Localizable.strings
+  2048
+
+  Created by Andrey on 09.05.2023.
+  
+*/
+
+"Alert.NewGame.Title" = "Start new game?";
+"Alert.Victory.Title" = "Victory!!! 🎉🎉🎉";
+"Alert.Victory.Button.NewGame" = "Start new game";
+"Alert.Lose.Title" = "You lose 🥲";
+"Alert.Lose.Button.NewGame" = "Start new game";
+
+"Button.HowToPlay" = "How to play";
+"Button.NewGame" = "New Game";
+
+"Start" = "Start";
+"Cancel" = "Cancel";
+"Score" = "Score";
+"Best" = "Best";
+
+"HowToPlay.macOS" = "
+Use swipe or arrow keys to move the tiles.
+Tiles with the same number merge into one when they touch.
+Add them up to reach 2048!
+";
+
+"HowToPlay.other" = "
+Use swipe to move the tiles.
+Tiles with the same number merge into one when they touch.
+Add them up to reach 2048!
+";

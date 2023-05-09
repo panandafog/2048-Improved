@@ -9,14 +9,16 @@ import SwiftUI
 
 struct HowToPlayView: View {
     
-    private let text = """
-Use your arrow keys to move the tiles.
-Tiles with the same number merge into one when they touch.
-Add them up to reach 2048!
-"""
+#if os(macOS)
+    private let text = "HowToPlay.macOS".localized
+#else
+    private let text = "HowToPlay.other".localized
+#endif
     
     var body: some View {
         Text(text)
+            .font(.callout)
+            .foregroundColor(.labelDark)
     }
 }
 

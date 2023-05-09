@@ -44,13 +44,13 @@ struct GameView: View {
                     .frame(width: fieldSize, height: fieldSize)
                 
                 HStack {
-                    Button("How to play", action: {
+                    Button("Button.HowToPlay".localized, action: {
                         withAnimation {
                             showHowToPlay.toggle()
                         }
                     })
                     .buttonStyle(HowToPlayButton())
-                    Button("New Game", action: { game.requestNewGame() })
+                    Button("Button.NewGame".localized, action: { game.requestNewGame() })
                         .buttonStyle(GameButton())
                 }
                 .frame(
@@ -64,25 +64,25 @@ struct GameView: View {
             )
         }
         .alert(
-            "Start new game?",
+            "Alert.NewGame.Title".localized,
             isPresented: $game.newGameRequested
         ) {
-            Button("Start", role: .destructive) {
+            Button("Start".localized, role: .destructive) {
                 do {
                     try game.startNewGame()
                 } catch {
                     print("Can't start the game")
                 }
             }
-            Button("Cancel", role: .cancel) {
+            Button("Cancel".localized, role: .cancel) {
                 game.cancelNewGame()
             }
         }
         .alert(
-            "Victory!!! 🎉🎉🎉",
+            "Alert.Victory.Title".localized,
             isPresented: $game.victory
         ) {
-            Button("Start new game", role: .cancel) {
+            Button("Alert.Victory.Button.NewGame".localized, role: .cancel) {
                 do {
                     try game.startNewGame()
                 } catch {
@@ -91,10 +91,10 @@ struct GameView: View {
             }
         }
         .alert(
-            "You lose 🥲",
+            "Alert.Lose.Title".localized,
             isPresented: $game.lose
         ) {
-            Button("Start new game", role: .cancel) {
+            Button("Alert.Lose.Button.NewGame".localized, role: .cancel) {
                 do {
                     try game.startNewGame()
                 } catch {
