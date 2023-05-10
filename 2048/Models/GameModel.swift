@@ -56,7 +56,7 @@ class GameModel: ObservableObject {
                 DispatchQueue.main.async { [self] in
                     score += moveScore
                     bestScore = max(score, bestScore)
-                    if field.isFull { lose = true }
+                    if !field.canMove { lose = true }
                 }
             } catch GameError.win {
                 DispatchQueue.main.async { [self] in

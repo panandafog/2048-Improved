@@ -31,6 +31,34 @@ class Field: ObservableObject {
         cells.count >= fieldSize * fieldSize
     }
     
+    var canMove: Bool {
+        guard isFull else {
+            return true
+        }
+        
+        for rowInd in 0 ..< fieldSize {
+            for colInd in 0 ..< fieldSize {
+                let current = getCell(at: .init(row: rowInd, col: colInd))?.value ?? 0
+                
+                if colInd != fieldSize - 1 {
+                    let right = getCell(at: .init(row: rowInd, col: colInd + 1))?.value ?? 0
+                    if current == right {
+                        return true
+                    }
+                }
+                
+                if rowInd != fieldSize - 1 {
+                    let bottom = getCell(at: .init(row: rowInd + 1, col: colInd))?.value ?? 0
+                    if current == bottom {
+                        return true
+                    }
+                }
+            }
+        }
+        
+        return false
+    }
+    
     init(fieldSize: Int, winValue: Int) {
         self.fieldSize = fieldSize
         self.winValue = winValue
