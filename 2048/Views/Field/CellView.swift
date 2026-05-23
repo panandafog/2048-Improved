@@ -8,41 +8,69 @@
 import SwiftUI
 
 struct FieldCellView: View {
-    var value: Int?
+    // MARK: - Input
     
-    private static let fontMultiplier = 0.4
-    private static let valueAnimation = Animation.easeOut(duration: 0.14)
-    private static let valueTransition = AnyTransition
-        .opacity
-        .combined(with: .scale(scale: 0.7))
+    let value: Int?
+    
+    // MARK: - Body
     
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                Rectangle()
-                    .cornerRadius(.CornerRadius.fieldCell)
-                    .foregroundColor(Color.cellForeground(value))
-                    .animation(Self.valueAnimation, value: value)
-                if let value = value {
-                    Text(String(value))
-                        .id(value)
-                        .foregroundColor(Color.cellLabel(value))
-                        .animation(Self.valueAnimation, value: value)
-                        .font(
-                            .system(
-                                size:
-                                    min(
-                                        geometry.size.height,
-                                        geometry.size.width
-                                    ) * Self.fontMultiplier
-                            )
-                        )
-                        .transition(Self.valueTransition)
-                }
+                cellBackground
+                valueLabel(in: geometry.size)
             }
         }
     }
 }
+
+private extension FieldCellView {
+    // MARK: - Rendering
+    
+    var cellBackground: some View {
+        Rectangle()
+            .cornerRadius(.CornerRadius.fieldCell)
+            .foregroundColor(Color.cellForeground(value))
+            .animation(FieldCellAnimation.valueChange, value: value)
+    }
+    
+    @ViewBuilder
+    func valueLabel(in size: CGSize) -> some View {
+        if let value {
+            Text(String(value))
+                // Recreate the label when the number changes so merge transitions run.
+                .id(value)
+                .foregroundColor(Color.cellLabel(value))
+                .font(.system(size: fontSize(for: size)))
+                .transition(FieldCellAnimation.valueTransition)
+                .animation(FieldCellAnimation.valueChange, value: value)
+        }
+    }
+    
+    func fontSize(for size: CGSize) -> CGFloat {
+        min(size.height, size.width) * FieldCellLayout.fontSizeFactor
+    }
+}
+
+// MARK: - Layout
+
+private enum FieldCellLayout {
+    static let fontSizeFactor: CGFloat = 0.4
+}
+
+// MARK: - Animation Parameters
+
+private enum FieldCellAnimation {
+    static let valueChangeDuration: TimeInterval = 0.14
+    static let labelTransitionScale: CGFloat = 0.7
+    
+    static let valueChange = Animation.easeOut(duration: valueChangeDuration)
+    static let valueTransition = AnyTransition
+        .opacity
+        .combined(with: .scale(scale: labelTransitionScale))
+}
+
+// MARK: - Preview
 
 struct CellView_Previews: PreviewProvider {
     static var previews: some View {
