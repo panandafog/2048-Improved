@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+// MARK: - Constants
+
 enum FieldLayout {
     static let cellSpacing: CGFloat = 10
     static let cornerRadius = CGFloat.CornerRadius.field
@@ -15,13 +17,19 @@ enum FieldLayout {
     static let cellCenterOffset: CGFloat = 0.5
 }
 
+// MARK: - Metrics
+
 struct FieldLayoutMetrics {
+    // MARK: - Properties
+    
     let fieldSize: Int
     let cellSize: CGSize
     
     var indices: Range<Int> {
         0 ..< fieldSize
     }
+    
+    // MARK: - Lifecycle
     
     init(containerSize: CGSize, fieldSize: Int) {
         self.fieldSize = fieldSize
@@ -34,6 +42,8 @@ struct FieldLayoutMetrics {
         
         cellSize = CGSize(width: cellWidth, height: cellHeight)
     }
+    
+    // MARK: - Positioning
     
     func center(for coordinate: Coordinate) -> CGPoint {
         CGPoint(

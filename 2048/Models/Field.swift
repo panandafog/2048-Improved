@@ -8,10 +8,13 @@
 import Foundation
 
 class Field: ObservableObject {
+    // MARK: - State
     
     private(set) var cells = Set<FieldCell>()
     let fieldSize: Int
     let winValue: Int
+    
+    // MARK: - Derived State
     
     var emptyCoordinates: [Coordinate] {
         var coordinates: [Coordinate] = []
@@ -59,10 +62,14 @@ class Field: ObservableObject {
         return false
     }
     
+    // MARK: - Lifecycle
+    
     init(fieldSize: Int, winValue: Int) {
         self.fieldSize = fieldSize
         self.winValue = winValue
     }
+    
+    // MARK: - Cell Access
     
     func getCell(at coordinate: Coordinate) -> FieldCell? {
         cells.first { $0.coordinate == coordinate }
@@ -82,6 +89,8 @@ class Field: ObservableObject {
         }
     }
     
+    // MARK: - Game Flow
+    
     func generateNewCell() throws {
         guard let coordinate = emptyCoordinates.randomElement() else {
             throw GameError.noFreeSpace
@@ -99,6 +108,8 @@ class Field: ObservableObject {
     func reset() {
         cells = []
     }
+    
+    // MARK: - Movement
     
     private func moveCells(_ direction: MoveDirection) throws -> Int {
         var moved = false
@@ -189,6 +200,8 @@ class Field: ObservableObject {
         
         return mergedSum
     }
+    
+    // MARK: - Legacy Direction-Specific Movement
     
 //    private func moveUp() -> Bool {
 //        var moved = false

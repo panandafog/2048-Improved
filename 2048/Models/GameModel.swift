@@ -9,12 +9,15 @@ import Combine
 import SwiftUI
 
 class GameModel: ObservableObject {
+    // MARK: - State
     
     var field: Field
     
     @Published var score: Int = 0
     @Published var victory = false
     @Published var lose = false
+    
+    // MARK: - Score Persistence
     
     @Published var bestScore: Int = ScoreRepository.bestScore {
         didSet {
@@ -23,9 +26,13 @@ class GameModel: ObservableObject {
     }
     @Published var newGameRequested = false
     
+    // MARK: - Derived State
+    
     var gameEnded: Bool {
         victory || lose
     }
+    
+    // MARK: - Private Properties
     
     private(set) var fieldSize: Int
     
@@ -35,10 +42,14 @@ class GameModel: ObservableObject {
         attributes: .concurrent
     )
     
+    // MARK: - Lifecycle
+    
     init(fieldSize: Int = 4, winValue: Int = 2048) {
         self.fieldSize = fieldSize
         field = .init(fieldSize: fieldSize, winValue: winValue)
     }
+    
+    // MARK: - Game Flow
     
     func start() throws {
         try field.generateNewCell()
@@ -71,6 +82,8 @@ class GameModel: ObservableObject {
             } catch {}
         }
     }
+    
+    // MARK: - New Game Flow
     
     func requestNewGame() {
         newGameRequested = true

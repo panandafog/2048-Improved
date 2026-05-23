@@ -9,7 +9,11 @@ import SwiftUI
 import CoreData
 
 struct ContentView: View {
+    // MARK: - State
+    
     @State var showHowToPlay = false
+    
+    // MARK: - Body
     
     var body: some View {
         HStack {
@@ -28,6 +32,8 @@ struct ContentView: View {
         .background(Color.gameForeground)
     }
 }
+
+// MARK: - Preview
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {

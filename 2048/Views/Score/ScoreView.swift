@@ -8,11 +8,17 @@
 import SwiftUI
 
 struct ScoreView: View {
+    // MARK: - Input
+    
     let kind: ScoreViewKind
     var value: Int
     
+    // MARK: - Layout
+    
     private let textPadding: CGFloat = 3
     private let minWidth: CGFloat = 70
+    
+    // MARK: - Body
     
     var body: some View {
         VStack {
@@ -33,6 +39,8 @@ struct ScoreView: View {
     }
 }
 
+// MARK: - Title Mapping
+
 extension ScoreViewKind {
     var title: String {
         switch self {
@@ -43,6 +51,8 @@ extension ScoreViewKind {
         }
     }
 }
+
+// MARK: - Preview
 
 struct ScoreView_Previews: PreviewProvider {
     static var previews: some View {

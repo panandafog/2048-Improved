@@ -141,6 +141,8 @@ private extension GameView {
     }
 }
 
+// MARK: - Preview
+
 struct GameView_Previews: PreviewProvider {
     static var previews: some View {
         GameView(showHowToPlay: .init(get: { true }, set: { _ in }))

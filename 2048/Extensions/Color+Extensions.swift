@@ -8,14 +8,19 @@
 import SwiftUI
 
 extension Color {
+    // MARK: - Surfaces
     
     static let gameForeground = Color("GameForeground")
     static let fieldForeground = Color("FieldForeground")
     static let buttonBackground = Color("ButtonBackground")
     
+    // MARK: - Labels
+    
     static let labelLight = Color("LabelLight")
     static let labelLight2 = Color("LabelLight2")
     static let labelDark = Color("LabelDark")
+    
+    // MARK: - Cells
     
     static func cellForeground(_ value: Int?) -> Color {
         if let value = value {

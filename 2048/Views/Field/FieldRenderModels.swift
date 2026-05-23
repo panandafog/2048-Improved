@@ -7,6 +7,8 @@
 
 import Foundation
 
+// MARK: - Render Update
+
 struct FieldRenderUpdate {
     let visibleCells: [RenderedFieldCell]
     let deferredCells: [RenderedFieldCell]
@@ -14,16 +16,24 @@ struct FieldRenderUpdate {
     let hasMovingCells: Bool
 }
 
+// MARK: - Delayed Value Update
+
 struct DelayedValueUpdate {
     let id: UUID
     let value: Int
 }
 
+// MARK: - Rendered Cell
+
 struct RenderedFieldCell: Identifiable, Equatable {
+    // MARK: - Properties
+    
     let id: UUID
     var value: Int
     var coordinate: Coordinate
     var isFadingIn: Bool
+    
+    // MARK: - Lifecycle
     
     init(
         id: UUID,
@@ -46,6 +56,8 @@ struct RenderedFieldCell: Identifiable, Equatable {
         )
     }
 }
+
+// MARK: - Field Snapshot
 
 struct FieldCellSnapshot: Identifiable, Equatable {
     let id: UUID
