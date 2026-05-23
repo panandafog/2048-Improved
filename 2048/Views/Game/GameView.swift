@@ -6,13 +6,15 @@
 //
 
 import SwiftUI
-#if os(macOS)
-import AppKit
-#endif
 
 struct GameView: View {
+    // MARK: - State
+    
     @StateObject var game = GameModel()
+    @StateObject private var inputController = GameInputController()
     @Binding var showHowToPlay: Bool
+    
+    // MARK: - Layout Metrics
     
     private static let verticalSpacing: CGFloat = 10
     private static let scoreStackHeight: CGFloat = 60
@@ -21,19 +23,8 @@ struct GameView: View {
     private static let minFieldSize: CGFloat = 300
     
     private static let notFieldHeight: CGFloat = scoreStackHeight + verticalSpacing * 2 + bottomStackHeight
-#if os(macOS)
-    private static let trackpadSwipeMinimumDistance: CGFloat = 30
-    private static let trackpadSwipeResetInterval: TimeInterval = 0.25
-#endif
     
-    @State private var width = CGFloat.zero
-#if os(macOS)
-    @State private var keyDownEventMonitor: Any?
-    @State private var gestureEventMonitor: Any?
-    @State private var trackpadSwipeDelta = CGSize.zero
-    @State private var trackpadSwipeHandled = false
-    @State private var lastTrackpadScrollEventTime: TimeInterval = 0
-#endif
+    // MARK: - Body
     
     var body: some View {
         GeometryReader { geometry in
@@ -123,136 +114,32 @@ struct GameView: View {
             maxHeight: Self.maxFieldSize + Self.notFieldHeight
         )
         .background(Color.gameForeground)
-        .onAppear {
-            do {
-                try game.start()
-            } catch {
-                fatalError("Can't start the game")
-            }
-        }
-        .gesture(
-            DragGesture(minimumDistance: 20, coordinateSpace: .global).onEnded { value in
-                let vector = CGVector(
-                    dx: value.translation.width,
-                    dy: value.translation.height
-                )
-                
-                let angle = atan2(vector.dx, vector.dy) - atan2(1, 0)
-                var degrees = angle * CGFloat(180.0 / Double.pi)
-                if degrees < 0 { degrees += 360.0 }
-                
-                if let direction = MoveDirection(degrees: degrees) {
-                    game.move(direction)
-                }
-            }
-        )
-        .onAppear {
-#if os(macOS)
-            addInputEventMonitors()
-#endif
-        }
-        .onDisappear {
-#if os(macOS)
-            removeInputEventMonitors()
-#endif
-        }
+        .gesture(moveDragGesture)
+        .onAppear(perform: handleAppear)
+        .onDisappear(perform: handleDisappear)
     }
 }
 
-#if os(macOS)
 private extension GameView {
-    func addInputEventMonitors() {
-        if keyDownEventMonitor == nil {
-            keyDownEventMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
-                if let direction = MoveDirection(keyCode: event.keyCode) {
-                    game.move(direction)
-                    return nil
-                }
-                return event
-            }
-        }
-        
-        if gestureEventMonitor == nil {
-            gestureEventMonitor = NSEvent.addLocalMonitorForEvents(matching: [.scrollWheel, .swipe]) { event in
-                handleGestureEvent(event)
-            }
-        }
+    // MARK: - Lifecycle
+    
+    func handleAppear() {
+        startGame()
+        inputController.start(game: game)
     }
     
-    func removeInputEventMonitors() {
-        if let keyDownEventMonitor {
-            NSEvent.removeMonitor(keyDownEventMonitor)
-            self.keyDownEventMonitor = nil
-        }
-        
-        if let gestureEventMonitor {
-            NSEvent.removeMonitor(gestureEventMonitor)
-            self.gestureEventMonitor = nil
-        }
+    func handleDisappear() {
+        inputController.stop()
     }
     
-    func handleGestureEvent(_ event: NSEvent) -> NSEvent? {
-        switch event.type {
-        case .swipe:
-            guard let direction = MoveDirection(swipeDeltaX: event.deltaX, deltaY: event.deltaY) else {
-                return event
-            }
-            game.move(direction)
-            return nil
-        case .scrollWheel:
-            guard event.hasPreciseScrollingDeltas else {
-                return event
-            }
-            
-            let hasGesturePhase = !event.phase.isEmpty
-            
-            if hasGesturePhase && (event.phase.contains(.began) || event.phase.contains(.mayBegin)) {
-                resetTrackpadSwipe()
-            }
-            
-            if hasGesturePhase && (event.phase.contains(.ended) || event.phase.contains(.cancelled)) {
-                resetTrackpadSwipe()
-                return nil
-            }
-            
-            if !hasGesturePhase && event.timestamp - lastTrackpadScrollEventTime > Self.trackpadSwipeResetInterval {
-                resetTrackpadSwipe()
-            }
-            lastTrackpadScrollEventTime = event.timestamp
-            
-            guard event.momentumPhase.isEmpty else {
-                return nil
-            }
-            
-            if trackpadSwipeHandled {
-                return nil
-            }
-            
-            let directionMultiplier: CGFloat = event.isDirectionInvertedFromDevice ? -1 : 1
-            trackpadSwipeDelta.width += event.scrollingDeltaX * directionMultiplier
-            trackpadSwipeDelta.height += event.scrollingDeltaY * directionMultiplier
-            
-            guard let direction = MoveDirection(
-                trackpadSwipeDelta: trackpadSwipeDelta,
-                minimumDistance: Self.trackpadSwipeMinimumDistance
-            ) else {
-                return event
-            }
-            
-            game.move(direction)
-            trackpadSwipeHandled = true
-            return nil
-        default:
-            return event
+    func startGame() {
+        do {
+            try game.start()
+        } catch {
+            fatalError("Can't start the game")
         }
-    }
-    
-    func resetTrackpadSwipe() {
-        trackpadSwipeDelta = .zero
-        trackpadSwipeHandled = false
     }
 }
-#endif
 
 struct GameView_Previews: PreviewProvider {
     static var previews: some View {

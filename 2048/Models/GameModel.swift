@@ -27,7 +27,7 @@ class GameModel: ObservableObject {
         victory || lose
     }
     
-    private (set) var fieldSize: Int
+    private(set) var fieldSize: Int
     
     private let calculationsQueue = DispatchQueue(
         label: "game.concurrent.queue",

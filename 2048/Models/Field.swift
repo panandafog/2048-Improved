@@ -9,7 +9,7 @@ import Foundation
 
 class Field: ObservableObject {
     
-    private (set) var cells = Set<FieldCell>()
+    private(set) var cells = Set<FieldCell>()
     let fieldSize: Int
     let winValue: Int
     
