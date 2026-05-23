@@ -5,6 +5,7 @@
 //  Created by Andrey on 06.05.2023.
 //
 
+import CoreGraphics
 import Foundation
 
 enum MoveDirection {
@@ -51,5 +52,29 @@ enum MoveDirection {
         default:
             return nil
         }
+    }
+    
+    init?(swipeDeltaX: CGFloat, deltaY: CGFloat) {
+        guard abs(swipeDeltaX) > 0 || abs(deltaY) > 0 else {
+            return nil
+        }
+        
+        if abs(swipeDeltaX) > abs(deltaY) {
+            self = swipeDeltaX < 0 ? .right : .left
+        } else {
+            self = deltaY > 0 ? .up : .down
+        }
+    }
+    
+    init?(trackpadSwipeDelta: CGSize, minimumDistance: CGFloat) {
+        let maxDelta = max(abs(trackpadSwipeDelta.width), abs(trackpadSwipeDelta.height))
+        guard maxDelta >= minimumDistance else {
+            return nil
+        }
+        
+        self.init(
+            swipeDeltaX: trackpadSwipeDelta.width,
+            deltaY: trackpadSwipeDelta.height
+        )
     }
 }

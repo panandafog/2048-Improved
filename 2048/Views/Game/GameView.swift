@@ -6,6 +6,9 @@
 //
 
 import SwiftUI
+#if os(macOS)
+import AppKit
+#endif
 
 struct GameView: View {
     @StateObject var game = GameModel()
@@ -18,8 +21,19 @@ struct GameView: View {
     private static let minFieldSize: CGFloat = 300
     
     private static let notFieldHeight: CGFloat = scoreStackHeight + verticalSpacing * 2 + bottomStackHeight
+#if os(macOS)
+    private static let trackpadSwipeMinimumDistance: CGFloat = 30
+    private static let trackpadSwipeResetInterval: TimeInterval = 0.25
+#endif
     
     @State private var width = CGFloat.zero
+#if os(macOS)
+    @State private var keyDownEventMonitor: Any?
+    @State private var gestureEventMonitor: Any?
+    @State private var trackpadSwipeDelta = CGSize.zero
+    @State private var trackpadSwipeHandled = false
+    @State private var lastTrackpadScrollEventTime: TimeInterval = 0
+#endif
     
     var body: some View {
         GeometryReader { geometry in
@@ -134,22 +148,111 @@ struct GameView: View {
         )
         .onAppear {
 #if os(macOS)
-            NSEvent.addLocalMonitorForEvents(matching: .keyDown) { (event) -> NSEvent? in
+            addInputEventMonitors()
+#endif
+        }
+        .onDisappear {
+#if os(macOS)
+            removeInputEventMonitors()
+#endif
+        }
+    }
+}
+
+#if os(macOS)
+private extension GameView {
+    func addInputEventMonitors() {
+        if keyDownEventMonitor == nil {
+            keyDownEventMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
                 if let direction = MoveDirection(keyCode: event.keyCode) {
                     game.move(direction)
                     return nil
                 }
                 return event
             }
-            
-            //            NSEvent.addLocalMonitorForEvents(matching: [.scrollWheel]) { event in
-            //                print("dx = \(event.deltaX)  dy = \(event.deltaY)")
-            //                return event
-            //            }
-#endif
+        }
+        
+        if gestureEventMonitor == nil {
+            gestureEventMonitor = NSEvent.addLocalMonitorForEvents(matching: [.scrollWheel, .swipe]) { event in
+                handleGestureEvent(event)
+            }
         }
     }
+    
+    func removeInputEventMonitors() {
+        if let keyDownEventMonitor {
+            NSEvent.removeMonitor(keyDownEventMonitor)
+            self.keyDownEventMonitor = nil
+        }
+        
+        if let gestureEventMonitor {
+            NSEvent.removeMonitor(gestureEventMonitor)
+            self.gestureEventMonitor = nil
+        }
+    }
+    
+    func handleGestureEvent(_ event: NSEvent) -> NSEvent? {
+        switch event.type {
+        case .swipe:
+            guard let direction = MoveDirection(swipeDeltaX: event.deltaX, deltaY: event.deltaY) else {
+                return event
+            }
+            game.move(direction)
+            return nil
+        case .scrollWheel:
+            guard event.hasPreciseScrollingDeltas else {
+                return event
+            }
+            
+            let hasGesturePhase = !event.phase.isEmpty
+            
+            if hasGesturePhase && (event.phase.contains(.began) || event.phase.contains(.mayBegin)) {
+                resetTrackpadSwipe()
+            }
+            
+            if hasGesturePhase && (event.phase.contains(.ended) || event.phase.contains(.cancelled)) {
+                resetTrackpadSwipe()
+                return nil
+            }
+            
+            if !hasGesturePhase && event.timestamp - lastTrackpadScrollEventTime > Self.trackpadSwipeResetInterval {
+                resetTrackpadSwipe()
+            }
+            lastTrackpadScrollEventTime = event.timestamp
+            
+            guard event.momentumPhase.isEmpty else {
+                return nil
+            }
+            
+            if trackpadSwipeHandled {
+                return nil
+            }
+            
+            let directionMultiplier: CGFloat = event.isDirectionInvertedFromDevice ? -1 : 1
+            trackpadSwipeDelta.width += event.scrollingDeltaX * directionMultiplier
+            trackpadSwipeDelta.height += event.scrollingDeltaY * directionMultiplier
+            
+            guard let direction = MoveDirection(
+                trackpadSwipeDelta: trackpadSwipeDelta,
+                minimumDistance: Self.trackpadSwipeMinimumDistance
+            ) else {
+                return event
+            }
+            
+            game.move(direction)
+            trackpadSwipeHandled = true
+            return nil
+        default:
+            return event
+        }
+    }
+    
+    func resetTrackpadSwipe() {
+        trackpadSwipeDelta = .zero
+        trackpadSwipeHandled = false
+    }
 }
+#endif
 
 struct GameView_Previews: PreviewProvider {
     static var previews: some View {
