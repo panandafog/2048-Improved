@@ -14,6 +14,8 @@
 
 "Button.HowToPlay" = "How to play";
 "Button.NewGame" = "New Game";
+"Button.StartGame" = "Start Game";
+"Button.ContinueGame" = "Continue Game";
 
 "Start" = "Start";
 "Cancel" = "Cancel";

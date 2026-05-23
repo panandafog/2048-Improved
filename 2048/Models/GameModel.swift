@@ -16,6 +16,7 @@ class GameModel: ObservableObject {
     @Published var score: Int = 0
     @Published var victory = false
     @Published var lose = false
+    @Published private(set) var hasStarted = false
     
     // MARK: - Score Persistence
     
@@ -52,8 +53,13 @@ class GameModel: ObservableObject {
     // MARK: - Game Flow
     
     func start() throws {
+        guard !hasStarted else {
+            return
+        }
+        
         try field.generateNewCell()
         try field.generateNewCell()
+        hasStarted = true
     }
     
     func move(_ direction: MoveDirection) {
@@ -91,7 +97,11 @@ class GameModel: ObservableObject {
     
     func startNewGame() throws {
         score = 0
+        victory = false
+        lose = false
+        newGameRequested = false
         field.reset()
+        hasStarted = false
         
         try start()
         objectWillChange.send()

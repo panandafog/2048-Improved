@@ -12,6 +12,7 @@ import AppKit
 
 // MARK: - SwiftUI Gestures
 
+#if !os(tvOS)
 extension GameView {
     var moveDragGesture: some Gesture {
         DragGesture(
@@ -36,6 +37,28 @@ extension GameView {
         }
     }
 }
+#endif
+
+#if os(tvOS)
+extension GameView {
+    // MARK: - Remote Input
+    
+    func handleMoveCommand(_ direction: MoveCommandDirection) {
+        switch direction {
+        case .up:
+            game.move(.up)
+        case .down:
+            game.move(.down)
+        case .left:
+            game.move(.left)
+        case .right:
+            game.move(.right)
+        default:
+            break
+        }
+    }
+}
+#endif
 
 // MARK: - Keyboard And Trackpad Input
 
