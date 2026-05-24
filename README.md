@@ -5,7 +5,7 @@ Use swipe to move the tiles.
 Tiles with the same number merge into one when they touch.
 Add them up to reach 2048!
 
-![macOS demo](Assets/screenshots/macos_demo.png)
+<img src="Assets/screenshots/macos_demo.png" alt="macOS demo" width="360">
 
 ### Requirements 
 - iOS 15.0
