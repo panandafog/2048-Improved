@@ -58,6 +58,17 @@ private extension TVContentView {
             Button("Button.HowToPlay".localized, action: showHowToPlay)
                 .buttonStyle(TVMenuButtonStyle(role: .secondary))
         }
+        .alert(
+            "Alert.NewGame.Title".localized,
+            isPresented: $game.newGameRequested
+        ) {
+            Button("Start".localized, role: .destructive) {
+                confirmStartNewGame()
+            }
+            Button("Cancel".localized, role: .cancel) {
+                game.cancelNewGame()
+            }
+        }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     
@@ -81,6 +92,19 @@ private extension TVContentView {
     // MARK: - Actions
     
     func startGame() {
+        guard !game.hasStarted else {
+            game.requestNewGame()
+            return
+        }
+        
+        startNewGame()
+    }
+    
+    func confirmStartNewGame() {
+        startNewGame()
+    }
+    
+    func startNewGame() {
         do {
             try game.startNewGame()
             screen = .game
