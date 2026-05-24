@@ -16,7 +16,7 @@ struct TVContentView: View {
     
     // MARK: - Layout
     
-    private static let menuSpacing: CGFloat = 36
+    private static let menuSpacing: CGFloat = 40
     private static let titleBottomPadding: CGFloat = 24
     
     // MARK: - Body
@@ -119,17 +119,6 @@ private enum TVScreen {
 struct TVContentView_Previews: PreviewProvider {
     static var previews: some View {
         TVContentView()
-    }
-}
-#else
-struct TVContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        GameView(
-            showHowToPlay: .constant(false),
-            game: .preview(),
-            showsBottomControls: false
-        )
-        .previewDisplayName("TV game layout")
     }
 }
 #endif

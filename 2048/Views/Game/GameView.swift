@@ -20,15 +20,16 @@ struct GameView: View {
     
     // MARK: - Layout Metrics
     
-    private static let verticalSpacing: CGFloat = 10
     private static let scoreStackHeight: CGFloat = 60
     private static let bottomStackHeight: CGFloat = 60
     
 #if os(tvOS)
+    private static let verticalSpacing: CGFloat = 50
     private static let maxFieldSize: CGFloat = 760
     private static let minFieldSize: CGFloat = 420
     private static let defaultShowsBottomControls = false
 #else
+    private static let verticalSpacing: CGFloat = 10
     private static let maxFieldSize: CGFloat = 500
     private static let minFieldSize: CGFloat = 300
     private static let defaultShowsBottomControls = true
