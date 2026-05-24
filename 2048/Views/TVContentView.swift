@@ -56,7 +56,7 @@ private extension TVContentView {
                 .buttonStyle(TVMenuButtonStyle())
             
             Button("Button.HowToPlay".localized, action: showHowToPlay)
-                .buttonStyle(TVMenuButtonStyle())
+                .buttonStyle(TVMenuButtonStyle(role: .secondary))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
