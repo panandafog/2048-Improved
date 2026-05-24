@@ -13,6 +13,10 @@ struct ScoreView: View {
     let kind: ScoreViewKind
     var value: Int
     
+#if os(tvOS)
+    var title: String? = nil
+#endif
+    
     // MARK: - Layout
     
     private let textPadding: CGFloat = 3
@@ -22,13 +26,21 @@ struct ScoreView: View {
     
     var body: some View {
         VStack {
-            Text(kind.title)
+            Text(scoreTitle)
                 .font(.headline)
+#if os(tvOS)
+                .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: false)
+#endif
                 .textCase(.uppercase)
                 .foregroundColor(.labelLight2)
                 .padding([.top, .horizontal], textPadding)
             Text(String(value))
                 .font(.title2)
+#if os(tvOS)
+                .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: false)
+#endif
                 .foregroundColor(.labelLight)
                 .padding([.bottom, .horizontal], textPadding)
         }
@@ -36,6 +48,16 @@ struct ScoreView: View {
         .padding(textPadding)
         .background(Color.fieldForeground)
         .cornerRadius(.CornerRadius.score)
+    }
+}
+
+private extension ScoreView {
+    var scoreTitle: String {
+#if os(tvOS)
+        title ?? kind.title
+#else
+        kind.title
+#endif
     }
 }
 

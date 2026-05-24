@@ -32,6 +32,7 @@ struct FieldView: View {
         }
         .background(Color.fieldForeground)
         .cornerRadius(FieldLayout.cornerRadius)
+        .onAppear(perform: syncRenderedCells)
     }
 }
 
@@ -60,13 +61,17 @@ private extension FieldView {
                 .transition(.identity)
         }
         .onReceive(game.field.objectWillChange) { _ in
-            updateCells(with: game.field.cells.map { FieldCellSnapshot(cell: $0) })
+            syncRenderedCells()
         }
     }
 }
 
 private extension FieldView {
     // MARK: - Render Updates
+    
+    func syncRenderedCells() {
+        updateCells(with: game.field.cells.map { FieldCellSnapshot(cell: $0) })
+    }
     
     func updateCells(with snapshots: [FieldCellSnapshot]) {
         cancelPendingAnimationWork()

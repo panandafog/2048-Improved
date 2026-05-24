@@ -12,7 +12,8 @@ extension Color {
     
     static let gameForeground = Color("GameForeground")
     static let fieldForeground = Color("FieldForeground")
-    static let buttonBackground = Color("ButtonBackground")
+    static let buttonBackgroundPrimary = Color("ButtonBackgroundPrimary")
+    static let buttonBackgroundSecondary = Color("ButtonBackgroundSecondary")
     
     // MARK: - Labels
     

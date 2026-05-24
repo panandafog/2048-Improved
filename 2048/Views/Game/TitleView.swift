@@ -10,7 +10,7 @@ import SwiftUI
 struct TitleView: View {
     var body: some View {
         Text("2048")
-            .font(.system(size: 40))
+            .font(.largeTitle)
             .foregroundColor(.labelDark)
     }
 }

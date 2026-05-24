@@ -22,8 +22,13 @@ jobs:
         include:
           - platform: iOS
             destination: generic/platform=iOS
+            app_icon_name: AppIconLegacy
           - platform: macOS
             destination: platform=macOS
+            app_icon_name: AppIconLegacy
+          - platform: tvOS
+            destination: generic/platform=tvOS
+            app_icon_name: AppIconTV
 
     steps:
       - name: Checkout
@@ -34,10 +39,16 @@ jobs:
 
       - name: Build ${{ matrix.platform }}
         run: |
+          build_settings=()
+          if [ -n "${{ matrix.app_icon_name }}" ]; then
+            build_settings+=(ASSETCATALOG_COMPILER_APPICON_NAME="${{ matrix.app_icon_name }}")
+          fi
+
           xcodebuild \
             -project 2048.xcodeproj \
             -scheme 2048 \
             -destination "${{ matrix.destination }}" \
             -derivedDataPath "$RUNNER_TEMP/DerivedData-${{ matrix.platform }}" \
             CODE_SIGNING_ALLOWED=NO \
+            "${build_settings[@]}" \
             build
