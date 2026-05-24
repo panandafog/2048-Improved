@@ -58,6 +58,11 @@ private extension TVContentView {
             Button("Button.HowToPlay".localized, action: showHowToPlay)
                 .buttonStyle(TVMenuButtonStyle(role: .secondary))
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .overlay(alignment: .bottomTrailing) {
+            menuScoreRow
+                .padding()
+        }
         .alert(
             "Alert.NewGame.Title".localized,
             isPresented: $game.newGameRequested
@@ -69,7 +74,26 @@ private extension TVContentView {
                 game.cancelNewGame()
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+    
+    @ViewBuilder
+    var menuScoreRow: some View {
+        if showsMenuScoreRow {
+            HStack {
+                if showsCurrentScore {
+                    ScoreView(kind: .current, value: game.score)
+                        .padding(.trailing)
+                }
+                
+                if showsBestScore {
+                    ScoreView(
+                        kind: .best,
+                        value: game.bestScore,
+                        title: showsCurrentScore ? nil : "BestScore".localized
+                    )
+                }
+            }
+        }
     }
     
     var gameScreen: some View {
@@ -123,6 +147,22 @@ private extension TVContentView {
     
     func returnToMenu() {
         screen = .menu
+    }
+}
+
+private extension TVContentView {
+    // MARK: - Derived State
+    
+    var showsMenuScoreRow: Bool {
+        showsCurrentScore || showsBestScore
+    }
+    
+    var showsCurrentScore: Bool {
+        game.hasStarted && !game.gameEnded
+    }
+    
+    var showsBestScore: Bool {
+        game.bestScore > 0
     }
 }
 

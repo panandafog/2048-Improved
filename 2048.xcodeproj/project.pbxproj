@@ -153,8 +153,8 @@
 			children = (
 				0B737EE32A058331009602AF /* ContentView.swift */,
 				0BFA00182D11000100000018 /* TVContentView.swift */,
-				0BFA001D2D1200010000001D /* TVHowToPlayView.swift */,
 				0B86CD342A0A966B0034B82E /* HowToPlayView.swift */,
+				0BFA001D2D1200010000001D /* TVHowToPlayView.swift */,
 				0B86CD3F2A0AB9140034B82E /* Game */,
 				0B86CD3E2A0AB8C30034B82E /* Field */,
 				0BDF44CB2A08F1D100FC5B54 /* Score */,
