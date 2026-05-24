@@ -14,6 +14,9 @@ struct GameView: View {
     @StateObject private var inputController = GameInputController()
     @Binding var showHowToPlay: Bool
     private let showsBottomControls: Bool
+#if os(tvOS)
+    private let onExitCommand: (() -> Void)?
+#endif
     
     // MARK: - Layout Metrics
     
@@ -48,11 +51,15 @@ struct GameView: View {
     init(
         showHowToPlay: Binding<Bool>,
         game: GameModel = GameModel(),
-        showsBottomControls: Bool = Self.defaultShowsBottomControls
+        showsBottomControls: Bool = Self.defaultShowsBottomControls,
+        onExitCommand: (() -> Void)? = nil
     ) {
         _showHowToPlay = showHowToPlay
         _game = StateObject(wrappedValue: game)
         self.showsBottomControls = showsBottomControls
+#if os(tvOS)
+        self.onExitCommand = onExitCommand
+#endif
     }
     
     // MARK: - Body
@@ -147,6 +154,7 @@ struct GameView: View {
 #if os(tvOS)
         .focusable()
         .onMoveCommand(perform: handleMoveCommand)
+        .onExitCommand(perform: onExitCommand)
 #endif
         .onAppear(perform: handleAppear)
         .onDisappear(perform: handleDisappear)

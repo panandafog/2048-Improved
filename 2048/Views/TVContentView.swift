@@ -12,7 +12,7 @@ struct TVContentView: View {
     // MARK: - State
     
     @StateObject private var game = GameModel()
-    @State private var isShowingGame = false
+    @State private var screen = TVScreen.menu
     
     // MARK: - Layout
     
@@ -26,9 +26,12 @@ struct TVContentView: View {
             Color.gameForeground
                 .ignoresSafeArea()
             
-            if isShowingGame {
+            switch screen {
+            case .game:
                 gameScreen
-            } else {
+            case .howToPlay:
+                howToPlayScreen
+            case .menu:
                 menu
             }
         }
@@ -52,9 +55,8 @@ private extension TVContentView {
             Button("Button.StartGame".localized, action: startGame)
                 .buttonStyle(TVMenuButtonStyle())
             
-            Button("Button.HowToPlay".localized, action: {})
+            Button("Button.HowToPlay".localized, action: showHowToPlay)
                 .buttonStyle(TVMenuButtonStyle())
-                .disabled(true)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -63,10 +65,15 @@ private extension TVContentView {
         GameView(
             showHowToPlay: .constant(false),
             game: game,
-            showsBottomControls: false
+            showsBottomControls: false,
+            onExitCommand: returnToMenu
         )
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onExitCommand(perform: returnToMenu)
+    }
+    
+    var howToPlayScreen: some View {
+        TVHowToPlayView(onExitCommand: returnToMenu)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
@@ -76,18 +83,22 @@ private extension TVContentView {
     func startGame() {
         do {
             try game.startNewGame()
-            isShowingGame = true
+            screen = .game
         } catch {
             print("Can't start the game")
         }
     }
     
     func continueGame() {
-        isShowingGame = true
+        screen = .game
+    }
+    
+    func showHowToPlay() {
+        screen = .howToPlay
     }
     
     func returnToMenu() {
-        isShowingGame = false
+        screen = .menu
     }
 }
 
@@ -95,6 +106,12 @@ private extension TVContentView {
 
 private enum TVMenuLayout {
     static let titleScale: CGFloat = 2
+}
+
+private enum TVScreen {
+    case menu
+    case game
+    case howToPlay
 }
 
 // MARK: - Preview

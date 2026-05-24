@@ -14,7 +14,7 @@
 
 "Button.HowToPlay" = "How to play";
 "Button.NewGame" = "New Game";
-"Button.StartGame" = "Start Game";
+"Button.StartGame" = "New Game";
 "Button.ContinueGame" = "Continue Game";
 
 "Start" = "Start";
@@ -30,6 +30,13 @@ Add them up to reach 2048!
 
 "HowToPlay.other" = "
 Use swipe to move the tiles.
+Tiles with the same number merge into one when they touch.
+Add them up to reach 2048!
+";
+
+"HowToPlay.tvOS" = "
+Use the Apple TV Remote to move the tiles.
+Press the remote buttons or swipe to move up, down, left, or right.
 Tiles with the same number merge into one when they touch.
 Add them up to reach 2048!
 ";
