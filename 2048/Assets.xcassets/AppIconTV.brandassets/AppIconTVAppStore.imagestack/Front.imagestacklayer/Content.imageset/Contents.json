@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "tv_icon_front_store.png",
+      "idiom" : "tv"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
