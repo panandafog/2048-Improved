@@ -40,6 +40,7 @@
 		0BFA00152D10000100000015 /* FieldRenderModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFA00142D10000100000014 /* FieldRenderModels.swift */; };
 		0BFA00172D11000100000017 /* GameControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFA00162D11000100000016 /* GameControlsView.swift */; };
 		0BFA00192D11000100000019 /* TVContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFA00182D11000100000018 /* TVContentView.swift */; };
+		0BFA001C2D1200010000001C /* TVMenuButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFA001B2D1200010000001B /* TVMenuButtonStyle.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -78,6 +79,7 @@
 		0BFA00142D10000100000014 /* FieldRenderModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldRenderModels.swift; sourceTree = "<group>"; };
 		0BFA00162D11000100000016 /* GameControlsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameControlsView.swift; sourceTree = "<group>"; };
 		0BFA00182D11000100000018 /* TVContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVContentView.swift; sourceTree = "<group>"; };
+		0BFA001B2D1200010000001B /* TVMenuButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVMenuButtonStyle.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -175,6 +177,7 @@
 			children = (
 				0B86CD2D2A0A81CB0034B82E /* GameButton.swift */,
 				0B86CD322A0A957A0034B82E /* HowToPlayButton.swift */,
+				0BFA001B2D1200010000001B /* TVMenuButtonStyle.swift */,
 			);
 			path = ButtonStyles;
 			sourceTree = "<group>";
@@ -314,6 +317,7 @@
 				0B737EF12A0586EE009602AF /* GameView.swift in Sources */,
 				0BFA00172D11000100000017 /* GameControlsView.swift in Sources */,
 				0BFA00192D11000100000019 /* TVContentView.swift in Sources */,
+				0BFA001C2D1200010000001C /* TVMenuButtonStyle.swift in Sources */,
 				0BFA00022D0F000100000001 /* GameView+Input.swift in Sources */,
 				0BFA00042D0F000100000001 /* GameGestureParameters.swift in Sources */,
 				0BDF44CD2A08F1F300FC5B54 /* ScoreViewKind.swift in Sources */,

@@ -5,9 +5,9 @@
 //  Created by Andrey on 05.05.2023.
 //
 
-#if os(tvOS)
 import SwiftUI
 
+#if os(tvOS)
 struct TVContentView: View {
     // MARK: - State
     
@@ -95,23 +95,6 @@ private extension TVContentView {
 
 private enum TVMenuLayout {
     static let titleScale: CGFloat = 2
-    static let buttonWidth: CGFloat = 460
-}
-
-// MARK: - Button Style
-
-private struct TVMenuButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .font(.title2)
-            .foregroundColor(.labelLight)
-            .frame(width: TVMenuLayout.buttonWidth)
-            .padding()
-            .background(Color.buttonBackground)
-            .cornerRadius(.CornerRadius.button)
-            .scaleEffect(configuration.isPressed ? 0.96 : 1)
-            .animation(.easeOut(duration: 0.2), value: configuration.isPressed)
-    }
 }
 
 // MARK: - Preview
@@ -119,6 +102,17 @@ private struct TVMenuButtonStyle: ButtonStyle {
 struct TVContentView_Previews: PreviewProvider {
     static var previews: some View {
         TVContentView()
+    }
+}
+#else
+struct TVContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        GameView(
+            showHowToPlay: .constant(false),
+            game: .preview(),
+            showsBottomControls: false
+        )
+        .previewDisplayName("TV game layout")
     }
 }
 #endif
