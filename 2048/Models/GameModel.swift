@@ -17,6 +17,7 @@ class GameModel: ObservableObject {
     @Published var victory = false
     @Published var lose = false
     @Published private(set) var hasStarted = false
+    @Published private(set) var hasMadeMove = false
     
     // MARK: - Score Persistence
     
@@ -31,6 +32,10 @@ class GameModel: ObservableObject {
     
     var gameEnded: Bool {
         victory || lose
+    }
+    
+    var hasSaveableGame: Bool {
+        hasMadeMove && !gameEnded
     }
     
     // MARK: - Private Properties
@@ -71,12 +76,14 @@ class GameModel: ObservableObject {
             do {
                 let moveScore = try field.move(direction)
                 DispatchQueue.main.async { [self] in
+                    hasMadeMove = true
                     score += moveScore
                     bestScore = max(score, bestScore)
                     if !field.canMove { lose = true }
                 }
             } catch GameError.win {
                 DispatchQueue.main.async { [self] in
+                    hasMadeMove = true
                     victory = true
                 }
             } catch GameError.cantMove {
@@ -102,6 +109,7 @@ class GameModel: ObservableObject {
         newGameRequested = false
         field.reset()
         hasStarted = false
+        hasMadeMove = false
         
         try start()
         objectWillChange.send()

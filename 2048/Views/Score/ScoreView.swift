@@ -12,15 +12,14 @@ struct ScoreView: View {
     
     let kind: ScoreViewKind
     var value: Int
+    
+#if os(tvOS)
     var title: String? = nil
+#endif
     
     // MARK: - Layout
     
-#if os(tvOS)
-    private let textPadding: CGFloat = 6
-#else
     private let textPadding: CGFloat = 3
-#endif
     private let minWidth: CGFloat = 70
     
     // MARK: - Body
@@ -54,7 +53,11 @@ struct ScoreView: View {
 
 private extension ScoreView {
     var scoreTitle: String {
+#if os(tvOS)
         title ?? kind.title
+#else
+        kind.title
+#endif
     }
 }
 

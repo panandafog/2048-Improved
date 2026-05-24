@@ -47,7 +47,7 @@ private extension TVContentView {
                 .scaleEffect(TVMenuLayout.titleScale)
                 .padding(.bottom, Self.titleBottomPadding)
             
-            if game.hasStarted {
+            if game.hasSaveableGame {
                 Button("Button.ContinueGame".localized, action: continueGame)
                     .buttonStyle(TVMenuButtonStyle())
             }
@@ -116,7 +116,7 @@ private extension TVContentView {
     // MARK: - Actions
     
     func startGame() {
-        guard !game.hasStarted else {
+        guard !game.hasSaveableGame else {
             game.requestNewGame()
             return
         }
@@ -158,7 +158,7 @@ private extension TVContentView {
     }
     
     var showsCurrentScore: Bool {
-        game.hasStarted && !game.gameEnded
+        game.hasSaveableGame
     }
     
     var showsBestScore: Bool {

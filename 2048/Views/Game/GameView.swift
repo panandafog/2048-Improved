@@ -90,7 +90,7 @@ struct GameView: View {
                 if showsBottomControls {
                     GameControlsView(
                         showHowToPlay: $showHowToPlay,
-                        onNewGame: game.requestNewGame
+                        onNewGame: handleNewGameRequest
                     )
                     .frame(
                         width: fieldSize,
@@ -108,11 +108,7 @@ struct GameView: View {
             isPresented: $game.newGameRequested
         ) {
             Button("Start".localized, role: .destructive) {
-                do {
-                    try game.startNewGame()
-                } catch {
-                    print("Can't start the game")
-                }
+                startNewGame()
             }
             Button("Cancel".localized, role: .cancel) {
                 game.cancelNewGame()
@@ -123,11 +119,7 @@ struct GameView: View {
             isPresented: $game.victory
         ) {
             Button("Alert.Victory.Button.NewGame".localized, role: .cancel) {
-                do {
-                    try game.startNewGame()
-                } catch {
-                    print("Can't start the game")
-                }
+                startNewGame()
             }
         }
         .alert(
@@ -135,11 +127,7 @@ struct GameView: View {
             isPresented: $game.lose
         ) {
             Button("Alert.Lose.Button.NewGame".localized, role: .cancel) {
-                do {
-                    try game.startNewGame()
-                } catch {
-                    print("Can't start the game")
-                }
+                startNewGame()
             }
         }
         .frame(
@@ -179,6 +167,23 @@ private extension GameView {
             try game.start()
         } catch {
             fatalError("Can't start the game")
+        }
+    }
+    
+    func handleNewGameRequest() {
+        guard game.hasSaveableGame else {
+            startNewGame()
+            return
+        }
+        
+        game.requestNewGame()
+    }
+    
+    func startNewGame() {
+        do {
+            try game.startNewGame()
+        } catch {
+            print("Can't start the game")
         }
     }
 }
