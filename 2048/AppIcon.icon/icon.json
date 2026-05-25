@@ -6,19 +6,99 @@
     {
       "layers" : [
         {
-          "blend-mode" : "normal",
-          "fill" : "none",
+          "blend-mode-specializations" : [
+            {
+              "appearance" : "dark",
+              "value" : "normal"
+            }
+          ],
+          "fill-specializations" : [
+            {
+              "value" : {
+                "solid" : "display-p3:0.45532,0.42725,0.39624,1.00000"
+              }
+            },
+            {
+              "appearance" : "dark",
+              "value" : {
+                "solid" : "display-p3:0.91357,0.86719,0.82373,1.00000"
+              }
+            },
+            {
+              "appearance" : "tinted",
+              "value" : "automatic"
+            }
+          ],
           "glass" : false,
           "hidden" : false,
-          "image-name" : "ios_icon_base.png",
-          "name" : "ios_icon_base",
-          "position" : {
-            "scale" : 1.1,
-            "translation-in-points" : [
-              0,
-              0
-            ]
-          }
+          "image-name" : "ios_icon_front.png",
+          "name" : "ios_icon_front",
+          "opacity-specializations" : [
+            {
+              "appearance" : "dark",
+              "value" : 1
+            }
+          ]
+        },
+        {
+          "blend-mode" : "normal",
+          "fill-specializations" : [
+            {
+              "value" : {
+                "solid" : "display-p3:0.97998,0.97314,0.94092,1.00000"
+              }
+            },
+            {
+              "appearance" : "dark",
+              "value" : {
+                "solid" : "display-p3:0.11798,0.10602,0.09399,1.00000"
+              }
+            }
+          ],
+          "glass" : false,
+          "hidden" : false,
+          "image-name" : "ios_icon_back.png",
+          "name" : "ios_icon_back",
+          "opacity-specializations" : [
+            {
+              "value" : 1
+            },
+            {
+              "appearance" : "tinted",
+              "value" : 0.7
+            }
+          ],
+          "position-specializations" : [
+            {
+              "value" : {
+                "scale" : 1,
+                "translation-in-points" : [
+                  0,
+                  0
+                ]
+              }
+            },
+            {
+              "idiom" : "square",
+              "value" : {
+                "scale" : 1,
+                "translation-in-points" : [
+                  0,
+                  0
+                ]
+              }
+            },
+            {
+              "idiom" : "watchOS",
+              "value" : {
+                "scale" : 1.2,
+                "translation-in-points" : [
+                  0,
+                  0
+                ]
+              }
+            }
+          ]
         }
       ],
       "shadow" : {
