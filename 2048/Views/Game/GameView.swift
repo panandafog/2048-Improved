@@ -8,25 +8,69 @@
 import SwiftUI
 
 struct GameView: View {
-    @StateObject var game = GameModel()
-    @Binding var showHowToPlay: Bool
+    // MARK: - State
     
-    private static let verticalSpacing: CGFloat = 10
+    @StateObject var game: GameModel
+    @StateObject private var inputController = GameInputController()
+    @Binding var showHowToPlay: Bool
+    private let showsBottomControls: Bool
+#if os(tvOS)
+    private let onExitCommand: (() -> Void)?
+#endif
+    
+    // MARK: - Layout Metrics
+    
     private static let scoreStackHeight: CGFloat = 60
     private static let bottomStackHeight: CGFloat = 60
+    
+#if os(tvOS)
+    private static let verticalSpacing: CGFloat = 50
+    private static let maxFieldSize: CGFloat = 760
+    private static let minFieldSize: CGFloat = 420
+    private static let defaultShowsBottomControls = false
+#else
+    private static let verticalSpacing: CGFloat = 10
     private static let maxFieldSize: CGFloat = 500
     private static let minFieldSize: CGFloat = 300
+    private static let defaultShowsBottomControls = true
+#endif
     
-    private static let notFieldHeight: CGFloat = scoreStackHeight + verticalSpacing * 2 + bottomStackHeight
+    private var bottomControlsHeight: CGFloat {
+        showsBottomControls ? Self.bottomStackHeight : 0
+    }
     
-    @State private var width = CGFloat.zero
+    private var verticalSpacingCount: CGFloat {
+        showsBottomControls ? 2 : 1
+    }
+    
+    private var notFieldHeight: CGFloat {
+        Self.scoreStackHeight + Self.verticalSpacing * verticalSpacingCount + bottomControlsHeight
+    }
+    
+    // MARK: - Lifecycle
+    
+    init(
+        showHowToPlay: Binding<Bool>,
+        game: GameModel = GameModel(),
+        showsBottomControls: Bool = Self.defaultShowsBottomControls,
+        onExitCommand: (() -> Void)? = nil
+    ) {
+        _showHowToPlay = showHowToPlay
+        _game = StateObject(wrappedValue: game)
+        self.showsBottomControls = showsBottomControls
+#if os(tvOS)
+        self.onExitCommand = onExitCommand
+#endif
+    }
+    
+    // MARK: - Body
     
     var body: some View {
         GeometryReader { geometry in
             VStack(spacing: Self.verticalSpacing) {
                 let fieldSize = min(
                     geometry.size.width,
-                    geometry.size.height - Self.notFieldHeight
+                    max(0, geometry.size.height - notFieldHeight)
                 )
                 
                 HStack {
@@ -43,20 +87,16 @@ struct GameView: View {
                 FieldView(game: game)
                     .frame(width: fieldSize, height: fieldSize)
                 
-                HStack {
-                    Button("Button.HowToPlay".localized, action: {
-                        withAnimation {
-                            showHowToPlay.toggle()
-                        }
-                    })
-                    .buttonStyle(HowToPlayButton())
-                    Button("Button.NewGame".localized, action: { game.requestNewGame() })
-                        .buttonStyle(GameButton())
+                if showsBottomControls {
+                    GameControlsView(
+                        showHowToPlay: $showHowToPlay,
+                        onNewGame: handleNewGameRequest
+                    )
+                    .frame(
+                        width: fieldSize,
+                        height: Self.bottomStackHeight
+                    )
                 }
-                .frame(
-                    width: fieldSize,
-                    height: Self.bottomStackHeight
-                )
             }
             .position(
                 x: geometry.frame(in: .local).midX,
@@ -68,11 +108,7 @@ struct GameView: View {
             isPresented: $game.newGameRequested
         ) {
             Button("Start".localized, role: .destructive) {
-                do {
-                    try game.startNewGame()
-                } catch {
-                    print("Can't start the game")
-                }
+                startNewGame()
             }
             Button("Cancel".localized, role: .cancel) {
                 game.cancelNewGame()
@@ -83,11 +119,7 @@ struct GameView: View {
             isPresented: $game.victory
         ) {
             Button("Alert.Victory.Button.NewGame".localized, role: .cancel) {
-                do {
-                    try game.startNewGame()
-                } catch {
-                    print("Can't start the game")
-                }
+                startNewGame()
             }
         }
         .alert(
@@ -95,61 +127,75 @@ struct GameView: View {
             isPresented: $game.lose
         ) {
             Button("Alert.Lose.Button.NewGame".localized, role: .cancel) {
-                do {
-                    try game.startNewGame()
-                } catch {
-                    print("Can't start the game")
-                }
+                startNewGame()
             }
         }
         .frame(
             minWidth: Self.minFieldSize,
             maxWidth: Self.maxFieldSize,
-            minHeight: Self.minFieldSize + Self.notFieldHeight,
-            maxHeight: Self.maxFieldSize + Self.notFieldHeight
+            minHeight: Self.minFieldSize + notFieldHeight,
+            maxHeight: Self.maxFieldSize + notFieldHeight
         )
         .background(Color.gameForeground)
-        .onAppear {
-            do {
-                try game.start()
-            } catch {
-                fatalError("Can't start the game")
+#if os(macOS)
+        .background {
+            GameKeyboardInputView { direction in
+                game.move(direction)
             }
         }
-        .gesture(
-            DragGesture(minimumDistance: 20, coordinateSpace: .global).onEnded { value in
-                let vector = CGVector(
-                    dx: value.translation.width,
-                    dy: value.translation.height
-                )
-                
-                let angle = atan2(vector.dx, vector.dy) - atan2(1, 0)
-                var degrees = angle * CGFloat(180.0 / Double.pi)
-                if degrees < 0 { degrees += 360.0 }
-                
-                if let direction = MoveDirection(degrees: degrees) {
-                    game.move(direction)
-                }
-            }
-        )
-        .onAppear {
-#if os(macOS)
-            NSEvent.addLocalMonitorForEvents(matching: .keyDown) { (event) -> NSEvent? in
-                if let direction = MoveDirection(keyCode: event.keyCode) {
-                    game.move(direction)
-                    return nil
-                }
-                return event
-            }
-            
-            //            NSEvent.addLocalMonitorForEvents(matching: [.scrollWheel]) { event in
-            //                print("dx = \(event.deltaX)  dy = \(event.deltaY)")
-            //                return event
-            //            }
 #endif
+#if !os(tvOS)
+        .gesture(moveDragGesture)
+#endif
+#if os(tvOS)
+        .focusable()
+        .onMoveCommand(perform: handleMoveCommand)
+        .onExitCommand(perform: onExitCommand)
+#endif
+        .onAppear(perform: handleAppear)
+        .onDisappear(perform: handleDisappear)
+    }
+}
+
+private extension GameView {
+    // MARK: - Lifecycle
+    
+    func handleAppear() {
+        startGame()
+        inputController.start(game: game)
+    }
+    
+    func handleDisappear() {
+        inputController.stop()
+    }
+    
+    func startGame() {
+        do {
+            try game.start()
+        } catch {
+            fatalError("Can't start the game")
+        }
+    }
+    
+    func handleNewGameRequest() {
+        guard game.hasSaveableGame else {
+            startNewGame()
+            return
+        }
+        
+        game.requestNewGame()
+    }
+    
+    func startNewGame() {
+        do {
+            try game.startNewGame()
+        } catch {
+            print("Can't start the game")
         }
     }
 }
+
+// MARK: - Preview
 
 struct GameView_Previews: PreviewProvider {
     static var previews: some View {

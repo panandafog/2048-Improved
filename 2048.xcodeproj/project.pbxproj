@@ -33,6 +33,20 @@
 		0BDF44C62A08724000FC5B54 /* Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDF44C52A08724000FC5B54 /* Binding.swift */; };
 		0BDF44CA2A08F17B00FC5B54 /* ScoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDF44C92A08F17B00FC5B54 /* ScoreView.swift */; };
 		0BDF44CD2A08F1F300FC5B54 /* ScoreViewKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDF44CC2A08F1F300FC5B54 /* ScoreViewKind.swift */; };
+		0BEA3D602FC3789C00A7D039 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 0BEA3D5F2FC3789C00A7D039 /* AppIcon.icon */; };
+		0BFA00022D0F000100000001 /* GameView+Input.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFA00012D0F000100000001 /* GameView+Input.swift */; };
+		0BFA00042D0F000100000001 /* GameGestureParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFA00032D0F000100000001 /* GameGestureParameters.swift */; };
+		0BFA00112D10000100000011 /* FieldLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFA00102D10000100000010 /* FieldLayout.swift */; };
+		0BFA00132D10000100000013 /* FieldAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFA00122D10000100000012 /* FieldAnimation.swift */; };
+		0BFA00152D10000100000015 /* FieldRenderModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFA00142D10000100000014 /* FieldRenderModels.swift */; };
+		0BFA00172D11000100000017 /* GameControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFA00162D11000100000016 /* GameControlsView.swift */; };
+		0BFA00192D11000100000019 /* TVContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFA00182D11000100000018 /* TVContentView.swift */; };
+		0BFA001C2D1200010000001C /* TVMenuButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFA001B2D1200010000001B /* TVMenuButtonStyle.swift */; };
+		0BFA001E2D1200010000001E /* TVHowToPlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFA001D2D1200010000001D /* TVHowToPlayView.swift */; };
+		0BFA00202D12000100000020 /* GameButtonRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFA001F2D1200010000001F /* GameButtonRole.swift */; };
+		0BFA00222D12000100000022 /* GameButtonLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFA00212D12000100000021 /* GameButtonLayout.swift */; };
+		0BFA00242D12000100000024 /* GameButtonMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFA00232D12000100000023 /* GameButtonMetrics.swift */; };
+		0BFA00262D12000100000026 /* GameButtonBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFA00252D12000100000025 /* GameButtonBody.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -64,6 +78,20 @@
 		0BDF44C52A08724000FC5B54 /* Binding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Binding.swift; sourceTree = "<group>"; };
 		0BDF44C92A08F17B00FC5B54 /* ScoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreView.swift; sourceTree = "<group>"; };
 		0BDF44CC2A08F1F300FC5B54 /* ScoreViewKind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreViewKind.swift; sourceTree = "<group>"; };
+		0BEA3D5F2FC3789C00A7D039 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
+		0BFA00012D0F000100000001 /* GameView+Input.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GameView+Input.swift"; sourceTree = "<group>"; };
+		0BFA00032D0F000100000001 /* GameGestureParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameGestureParameters.swift; sourceTree = "<group>"; };
+		0BFA00102D10000100000010 /* FieldLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldLayout.swift; sourceTree = "<group>"; };
+		0BFA00122D10000100000012 /* FieldAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldAnimation.swift; sourceTree = "<group>"; };
+		0BFA00142D10000100000014 /* FieldRenderModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldRenderModels.swift; sourceTree = "<group>"; };
+		0BFA00162D11000100000016 /* GameControlsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameControlsView.swift; sourceTree = "<group>"; };
+		0BFA00182D11000100000018 /* TVContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVContentView.swift; sourceTree = "<group>"; };
+		0BFA001B2D1200010000001B /* TVMenuButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVMenuButtonStyle.swift; sourceTree = "<group>"; };
+		0BFA001D2D1200010000001D /* TVHowToPlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVHowToPlayView.swift; sourceTree = "<group>"; };
+		0BFA001F2D1200010000001F /* GameButtonRole.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameButtonRole.swift; sourceTree = "<group>"; };
+		0BFA00212D12000100000021 /* GameButtonLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameButtonLayout.swift; sourceTree = "<group>"; };
+		0BFA00232D12000100000023 /* GameButtonMetrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameButtonMetrics.swift; sourceTree = "<group>"; };
+		0BFA00252D12000100000025 /* GameButtonBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameButtonBody.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,6 +132,7 @@
 				0BDF44C32A08623B00FC5B54 /* Extensions */,
 				0B737EDC2A058331009602AF /* _2048App.swift */,
 				0B737EE52A058333009602AF /* Assets.xcassets */,
+				0BEA3D5F2FC3789C00A7D039 /* AppIcon.icon */,
 				0B86CD442A0ABBF30034B82E /* Localizable.strings */,
 				0B737EE72A058333009602AF /* _2048.entitlements */,
 				0B737EE82A058333009602AF /* Preview Content */,
@@ -123,7 +152,9 @@
 			isa = PBXGroup;
 			children = (
 				0B737EE32A058331009602AF /* ContentView.swift */,
+				0BFA00182D11000100000018 /* TVContentView.swift */,
 				0B86CD342A0A966B0034B82E /* HowToPlayView.swift */,
+				0BFA001D2D1200010000001D /* TVHowToPlayView.swift */,
 				0B86CD3F2A0AB9140034B82E /* Game */,
 				0B86CD3E2A0AB8C30034B82E /* Field */,
 				0BDF44CB2A08F1D100FC5B54 /* Score */,
@@ -135,6 +166,9 @@
 			isa = PBXGroup;
 			children = (
 				0B737EFD2A05918D009602AF /* FieldView.swift */,
+				0BFA00102D10000100000010 /* FieldLayout.swift */,
+				0BFA00122D10000100000012 /* FieldAnimation.swift */,
+				0BFA00142D10000100000014 /* FieldRenderModels.swift */,
 				0B737EFF2A06780E009602AF /* CellView.swift */,
 			);
 			path = Field;
@@ -144,6 +178,9 @@
 			isa = PBXGroup;
 			children = (
 				0B737EF02A0586EE009602AF /* GameView.swift */,
+				0BFA00162D11000100000016 /* GameControlsView.swift */,
+				0BFA00012D0F000100000001 /* GameView+Input.swift */,
+				0BFA00032D0F000100000001 /* GameGestureParameters.swift */,
 				0B86CD3C2A0AB1D90034B82E /* TitleView.swift */,
 			);
 			path = Game;
@@ -152,8 +189,13 @@
 		0B86CD402A0AB9300034B82E /* ButtonStyles */ = {
 			isa = PBXGroup;
 			children = (
+				0BFA00252D12000100000025 /* GameButtonBody.swift */,
 				0B86CD2D2A0A81CB0034B82E /* GameButton.swift */,
+				0BFA00212D12000100000021 /* GameButtonLayout.swift */,
+				0BFA00232D12000100000023 /* GameButtonMetrics.swift */,
+				0BFA001F2D1200010000001F /* GameButtonRole.swift */,
 				0B86CD322A0A957A0034B82E /* HowToPlayButton.swift */,
+				0BFA001B2D1200010000001B /* TVMenuButtonStyle.swift */,
 			);
 			path = ButtonStyles;
 			sourceTree = "<group>";
@@ -268,6 +310,7 @@
 				0B737EEA2A058333009602AF /* Preview Assets.xcassets in Resources */,
 				0B86CD452A0ABBF30034B82E /* Localizable.strings in Resources */,
 				0B737EE62A058333009602AF /* Assets.xcassets in Resources */,
+				0BEA3D602FC3789C00A7D039 /* AppIcon.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -284,12 +327,25 @@
 				0BDF44CA2A08F17B00FC5B54 /* ScoreView.swift in Sources */,
 				0BDF44C62A08724000FC5B54 /* Binding.swift in Sources */,
 				0B737EF82A058947009602AF /* CellChange.swift in Sources */,
+				0BFA00262D12000100000026 /* GameButtonBody.swift in Sources */,
 				0B86CD332A0A957A0034B82E /* HowToPlayButton.swift in Sources */,
 				0B737EE42A058331009602AF /* ContentView.swift in Sources */,
 				0B737EFE2A05918D009602AF /* FieldView.swift in Sources */,
+				0BFA00112D10000100000011 /* FieldLayout.swift in Sources */,
+				0BFA00132D10000100000013 /* FieldAnimation.swift in Sources */,
+				0BFA00152D10000100000015 /* FieldRenderModels.swift in Sources */,
 				0B737EF12A0586EE009602AF /* GameView.swift in Sources */,
+				0BFA00202D12000100000020 /* GameButtonRole.swift in Sources */,
+				0BFA00172D11000100000017 /* GameControlsView.swift in Sources */,
+				0BFA00192D11000100000019 /* TVContentView.swift in Sources */,
+				0BFA001C2D1200010000001C /* TVMenuButtonStyle.swift in Sources */,
+				0BFA001E2D1200010000001E /* TVHowToPlayView.swift in Sources */,
+				0BFA00022D0F000100000001 /* GameView+Input.swift in Sources */,
+				0BFA00042D0F000100000001 /* GameGestureParameters.swift in Sources */,
+				0BFA00222D12000100000022 /* GameButtonLayout.swift in Sources */,
 				0BDF44CD2A08F1F300FC5B54 /* ScoreViewKind.swift in Sources */,
 				0B86CD392A0AAFE90034B82E /* CGFloat.swift in Sources */,
+				0BFA00242D12000100000024 /* GameButtonMetrics.swift in Sources */,
 				0B86CD302A0A8A8B0034B82E /* ScoreRepository.swift in Sources */,
 				0B86CD352A0A966B0034B82E /* HowToPlayView.swift in Sources */,
 				0B86CD2E2A0A81CB0034B82E /* GameButton.swift in Sources */,
@@ -420,10 +476,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=appletvos*]" = AppIconTV;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = 2048/_2048.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"2048/Preview Content\"";
 				DEVELOPMENT_TEAM = 3HG9ZBM8AV;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -445,14 +503,16 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
-				MARKETING_VERSION = 0.1.1;
+				MARKETING_VERSION = 0.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.panandafog.-2048";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,3";
+				TVOS_DEPLOYMENT_TARGET = 15.0;
 			};
 			name = Debug;
 		};
@@ -460,10 +520,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=appletvos*]" = AppIconTV;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = 2048/_2048.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"2048/Preview Content\"";
 				DEVELOPMENT_TEAM = 3HG9ZBM8AV;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -485,14 +547,16 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
-				MARKETING_VERSION = 0.1.1;
+				MARKETING_VERSION = 0.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.panandafog.-2048";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,3";
+				TVOS_DEPLOYMENT_TARGET = 15.0;
 			};
 			name = Release;
 		};

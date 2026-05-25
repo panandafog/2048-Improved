@@ -9,12 +9,17 @@ import Combine
 import SwiftUI
 
 class GameModel: ObservableObject {
+    // MARK: - State
     
     var field: Field
     
     @Published var score: Int = 0
     @Published var victory = false
     @Published var lose = false
+    @Published private(set) var hasStarted = false
+    @Published private(set) var hasMadeMove = false
+    
+    // MARK: - Score Persistence
     
     @Published var bestScore: Int = ScoreRepository.bestScore {
         didSet {
@@ -23,11 +28,19 @@ class GameModel: ObservableObject {
     }
     @Published var newGameRequested = false
     
+    // MARK: - Derived State
+    
     var gameEnded: Bool {
         victory || lose
     }
     
-    private (set) var fieldSize: Int
+    var hasSaveableGame: Bool {
+        hasMadeMove && !gameEnded
+    }
+    
+    // MARK: - Private Properties
+    
+    private(set) var fieldSize: Int
     
     private let calculationsQueue = DispatchQueue(
         label: "game.concurrent.queue",
@@ -35,14 +48,23 @@ class GameModel: ObservableObject {
         attributes: .concurrent
     )
     
+    // MARK: - Lifecycle
+    
     init(fieldSize: Int = 4, winValue: Int = 2048) {
         self.fieldSize = fieldSize
         field = .init(fieldSize: fieldSize, winValue: winValue)
     }
     
+    // MARK: - Game Flow
+    
     func start() throws {
+        guard !hasStarted else {
+            return
+        }
+        
         try field.generateNewCell()
         try field.generateNewCell()
+        hasStarted = true
     }
     
     func move(_ direction: MoveDirection) {
@@ -54,12 +76,14 @@ class GameModel: ObservableObject {
             do {
                 let moveScore = try field.move(direction)
                 DispatchQueue.main.async { [self] in
+                    hasMadeMove = true
                     score += moveScore
                     bestScore = max(score, bestScore)
                     if !field.canMove { lose = true }
                 }
             } catch GameError.win {
                 DispatchQueue.main.async { [self] in
+                    hasMadeMove = true
                     victory = true
                 }
             } catch GameError.cantMove {
@@ -72,13 +96,20 @@ class GameModel: ObservableObject {
         }
     }
     
+    // MARK: - New Game Flow
+    
     func requestNewGame() {
         newGameRequested = true
     }
     
     func startNewGame() throws {
         score = 0
+        victory = false
+        lose = false
+        newGameRequested = false
         field.reset()
+        hasStarted = false
+        hasMadeMove = false
         
         try start()
         objectWillChange.send()

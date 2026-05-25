@@ -8,20 +8,30 @@
 import Foundation
 
 class FieldCell: Identifiable, Hashable, ObservableObject {
+    // MARK: - Identity
+    
     let id = UUID()
+    
+    // MARK: - State
     
     @Published var value: Int
     var coordinate: Coordinate
+    
+    // MARK: - Lifecycle
     
     init(value: Int, coordinate: Coordinate) {
         self.value = value
         self.coordinate = coordinate
     }
     
+    // MARK: - Hashable
+    
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
 }
+
+// MARK: - Equatable
 
 extension FieldCell: Equatable {
     static func == (lhs: FieldCell, rhs: FieldCell) -> Bool {

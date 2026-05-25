@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct HowToPlayView: View {
+    // MARK: - Content
     
 #if os(macOS)
     private let text = "HowToPlay.macOS".localized
@@ -15,12 +16,16 @@ struct HowToPlayView: View {
     private let text = "HowToPlay.other".localized
 #endif
     
+    // MARK: - Body
+    
     var body: some View {
         Text(text)
             .font(.callout)
             .foregroundColor(.labelDark)
     }
 }
+
+// MARK: - Preview
 
 struct HowToPlayView_Previews: PreviewProvider {
     static var previews: some View {

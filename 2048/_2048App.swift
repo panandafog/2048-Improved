@@ -11,7 +11,11 @@ import SwiftUI
 struct _2048App: App {
     var body: some Scene {
         WindowGroup {
+#if os(tvOS)
+            TVContentView()
+#else
             ContentView()
+#endif
         }
         #if os(macOS)
         .windowStyle(.hiddenTitleBar)

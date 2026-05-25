@@ -8,9 +8,12 @@
 import Foundation
 
 enum ScoreRepository {
+    // MARK: - Storage
     
     private static let defaults = UserDefaults.standard
     private static let bestScoreKey = "BestScore"
+    
+    // MARK: - Accessors
     
     static var bestScore: Int {
         get {

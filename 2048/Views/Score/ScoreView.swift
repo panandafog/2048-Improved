@@ -8,21 +8,39 @@
 import SwiftUI
 
 struct ScoreView: View {
+    // MARK: - Input
+    
     let kind: ScoreViewKind
     var value: Int
+    
+#if os(tvOS)
+    var title: String? = nil
+#endif
+    
+    // MARK: - Layout
     
     private let textPadding: CGFloat = 3
     private let minWidth: CGFloat = 70
     
+    // MARK: - Body
+    
     var body: some View {
         VStack {
-            Text(kind.title)
+            Text(scoreTitle)
                 .font(.headline)
+#if os(tvOS)
+                .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: false)
+#endif
                 .textCase(.uppercase)
                 .foregroundColor(.labelLight2)
                 .padding([.top, .horizontal], textPadding)
             Text(String(value))
                 .font(.title2)
+#if os(tvOS)
+                .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: false)
+#endif
                 .foregroundColor(.labelLight)
                 .padding([.bottom, .horizontal], textPadding)
         }
@@ -32,6 +50,18 @@ struct ScoreView: View {
         .cornerRadius(.CornerRadius.score)
     }
 }
+
+private extension ScoreView {
+    var scoreTitle: String {
+#if os(tvOS)
+        title ?? kind.title
+#else
+        kind.title
+#endif
+    }
+}
+
+// MARK: - Title Mapping
 
 extension ScoreViewKind {
     var title: String {
@@ -43,6 +73,8 @@ extension ScoreViewKind {
         }
     }
 }
+
+// MARK: - Preview
 
 struct ScoreView_Previews: PreviewProvider {
     static var previews: some View {
