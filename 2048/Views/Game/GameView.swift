@@ -137,6 +137,13 @@ struct GameView: View {
             maxHeight: Self.maxFieldSize + notFieldHeight
         )
         .background(Color.gameForeground)
+#if os(macOS)
+        .background {
+            GameKeyboardInputView { direction in
+                game.move(direction)
+            }
+        }
+#endif
 #if !os(tvOS)
         .gesture(moveDragGesture)
 #endif
