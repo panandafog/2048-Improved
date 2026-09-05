@@ -10,14 +10,17 @@ import SwiftUI
 #if os(tvOS)
 struct TVHowToPlayView: View {
     @State private var selectedMode: GameMode
+    @State private var page = 0
     @FocusState private var isModePickerFocused: Bool
 
+    private let initialMode: GameMode
     let onExitCommand: (() -> Void)?
 
     init(
         initialMode: GameMode = .classic,
         onExitCommand: (() -> Void)? = nil
     ) {
+        self.initialMode = initialMode
         _selectedMode = State(initialValue: initialMode)
         self.onExitCommand = onExitCommand
     }
@@ -30,28 +33,24 @@ struct TVHowToPlayView: View {
 
             modePicker
 
-            ScrollView {
-                VStack(spacing: TVHowToPlayLayout.sectionSpacing) {
-                    Text("HowToPlay.tvOS".localized)
-                        .font(.title2)
-                        .foregroundColor(.labelDark)
-                        .multilineTextAlignment(.center)
-                        .lineSpacing(TVHowToPlayLayout.textLineSpacing)
-                        .frame(maxWidth: TVHowToPlayLayout.textMaxWidth)
+            pageContent
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-                    if selectedMode == .anomaly {
-                        AnomalyGuideView()
-                    }
-                }
-                .frame(maxWidth: .infinity)
+            if pageCount > 1 {
+                pageControls
             }
         }
         .padding(.horizontal, TVHowToPlayLayout.horizontalPadding)
         .padding(.vertical, TVHowToPlayLayout.verticalPadding)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.gameForeground)
+        .onChange(of: selectedMode) { _ in
+            page = 0
+        }
         .onExitCommand(perform: onExitCommand)
         .onAppear {
+            selectedMode = initialMode
+            page = 0
             isModePickerFocused = true
         }
     }
@@ -59,7 +58,7 @@ struct TVHowToPlayView: View {
 
 private extension TVHowToPlayView {
     var modePicker: some View {
-        Picker("ModeSelection.Title".localized, selection: $selectedMode) {
+        Picker("GameMode.Title".localized, selection: $selectedMode) {
             ForEach(GameMode.allCases) { mode in
                 Label(mode.title, systemImage: mode.systemImage)
                     .tag(mode)
@@ -70,16 +69,109 @@ private extension TVHowToPlayView {
         .frame(maxWidth: TVHowToPlayLayout.pickerMaxWidth)
         .focused($isModePickerFocused)
     }
+
+    @ViewBuilder
+    var pageContent: some View {
+        if page == 0 {
+            overviewPage
+        } else {
+            AnomalyGuideView()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+    }
+
+    var overviewPage: some View {
+        HStack(spacing: TVHowToPlayLayout.overviewSpacing) {
+            HowToPlayBoardPreview(mode: selectedMode)
+                .frame(
+                    width: TVHowToPlayLayout.boardSize,
+                    height: TVHowToPlayLayout.boardSize
+                )
+
+            Divider()
+                .overlay(Color.labelDark.opacity(TVHowToPlayLayout.dividerOpacity))
+                .frame(height: TVHowToPlayLayout.dividerHeight)
+
+            VStack(alignment: .leading, spacing: TVHowToPlayLayout.textSpacing) {
+                Label(selectedMode.title, systemImage: selectedMode.systemImage)
+                    .font(.title.bold())
+                    .foregroundColor(.labelDark)
+
+                Text(overviewInstructions)
+                    .font(.title2)
+                    .foregroundColor(.labelDark)
+                    .lineSpacing(TVHowToPlayLayout.textLineSpacing)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .frame(maxWidth: TVHowToPlayLayout.textMaxWidth, alignment: .leading)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    var pageControls: some View {
+        HStack(spacing: TVHowToPlayLayout.pageControlSpacing) {
+            Button {
+                changePage(by: -1)
+            } label: {
+                Image(systemName: "chevron.left")
+                    .accessibilityLabel("Previous".localized)
+            }
+            .buttonStyle(HowToPlayButton())
+            .disabled(page == 0)
+
+            Text(
+                String(
+                    format: "HowToPlay.Page".localized,
+                    page + 1,
+                    pageCount
+                )
+            )
+            .font(.title3.bold())
+            .foregroundColor(.labelDark)
+            .frame(minWidth: TVHowToPlayLayout.pageLabelWidth)
+
+            Button {
+                changePage(by: 1)
+            } label: {
+                Image(systemName: "chevron.right")
+                    .accessibilityLabel("Next".localized)
+            }
+            .buttonStyle(HowToPlayButton())
+            .disabled(page == pageCount - 1)
+        }
+    }
+
+    var pageCount: Int {
+        selectedMode == .anomaly ? 2 : 1
+    }
+
+    var overviewInstructions: String {
+        if selectedMode == .anomaly {
+            return "HowToPlay.Overview.Anomaly".localized
+        }
+
+        return "HowToPlay.Overview.tvOS".localized
+    }
+
+    func changePage(by offset: Int) {
+        page = min(max(page + offset, 0), pageCount - 1)
+    }
 }
 
 private enum TVHowToPlayLayout {
-    static let contentSpacing: CGFloat = 28
-    static let sectionSpacing: CGFloat = 28
+    static let contentSpacing: CGFloat = 24
     static let horizontalPadding: CGFloat = 96
-    static let verticalPadding: CGFloat = 48
-    static let textLineSpacing: CGFloat = 8
-    static let textMaxWidth: CGFloat = 920
+    static let verticalPadding: CGFloat = 40
     static let pickerMaxWidth: CGFloat = 680
+    static let overviewSpacing: CGFloat = 80
+    static let boardSize: CGFloat = 430
+    static let textSpacing: CGFloat = 24
+    static let textLineSpacing: CGFloat = 8
+    static let textMaxWidth: CGFloat = 680
+    static let dividerHeight: CGFloat = 520
+    static let dividerOpacity: Double = 0.3
+    static let pageControlSpacing: CGFloat = 32
+    static let pageLabelWidth: CGFloat = 120
 }
 
 // MARK: - Preview

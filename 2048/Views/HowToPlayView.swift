@@ -18,25 +18,35 @@ struct HowToPlayView: View {
     }
 
     var body: some View {
-        VStack(spacing: HowToPlayLayout.spacing) {
-            Text("Button.HowToPlay".localized)
-                .font(.title.bold())
-                .foregroundColor(.labelDark)
+        VStack(spacing: HowToPlayLayout.sectionSpacing) {
+            header
+                .frame(maxWidth: HowToPlayLayout.contentMaxWidth)
+                .padding(.horizontal, HowToPlayLayout.horizontalContentPadding)
 
             modePicker
+                .frame(maxWidth: HowToPlayLayout.contentMaxWidth)
+                .padding(.horizontal, HowToPlayLayout.horizontalContentPadding)
 
             ScrollView {
-                instructions
-                    .frame(maxWidth: HowToPlayLayout.contentMaxWidth)
-                    .frame(maxWidth: .infinity)
-            }
+                VStack(spacing: HowToPlayLayout.contentSpacing) {
+                    HowToPlayOverviewView(
+                        mode: selectedMode,
+                        instructions: instructions
+                    )
 
-            Button("Done".localized) {
-                dismiss()
+                    if selectedMode == .anomaly {
+                        AnomalyGuideView()
+                    }
+                }
+                .frame(maxWidth: HowToPlayLayout.contentMaxWidth)
+                .padding(.horizontal, HowToPlayLayout.horizontalContentPadding)
+                .padding(.bottom, HowToPlayLayout.scrollContentBottomPadding)
+                .frame(maxWidth: .infinity)
             }
-            .buttonStyle(GameButton())
+            .ignoresSafeArea(edges: [.horizontal, .bottom])
         }
-        .padding(HowToPlayLayout.padding)
+        .padding(.top, HowToPlayLayout.verticalContentPadding)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .frame(
             minWidth: HowToPlayLayout.minimumWidth,
             minHeight: HowToPlayLayout.minimumHeight
@@ -49,8 +59,23 @@ struct HowToPlayView: View {
 }
 
 private extension HowToPlayView {
+    var header: some View {
+        HStack {
+            Text("Button.HowToPlay".localized)
+                .font(HowToPlayLayout.titleFont)
+                .foregroundColor(.labelDark)
+
+            Spacer()
+
+            Button("Done".localized) {
+                dismiss()
+            }
+            .buttonStyle(GameButton())
+        }
+    }
+
     var modePicker: some View {
-        Picker("ModeSelection.Title".localized, selection: $selectedMode) {
+        Picker("GameMode.Title".localized, selection: $selectedMode) {
             ForEach(GameMode.allCases) { mode in
                 Label(mode.title, systemImage: mode.systemImage)
                     .tag(mode)
@@ -59,45 +84,239 @@ private extension HowToPlayView {
         .pickerStyle(.segmented)
         .labelsHidden()
         .frame(maxWidth: HowToPlayLayout.pickerMaxWidth)
+        .frame(maxWidth: .infinity)
     }
 
-    @ViewBuilder
-    var instructions: some View {
-        VStack(spacing: HowToPlayLayout.sectionSpacing) {
-            Text(baseInstructions)
-                .font(.callout)
-                .foregroundColor(.labelDark)
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
-
-            if selectedMode == .anomaly {
-                AnomalyGuideView()
-            }
+    var instructions: String {
+        if selectedMode == .anomaly {
+            return "HowToPlay.Overview.Anomaly".localized
         }
-    }
 
-    var baseInstructions: String {
 #if os(macOS)
-        return "HowToPlay.macOS".localized
+        return "HowToPlay.Overview.macOS".localized
 #else
-        return "HowToPlay.other".localized
+        return "HowToPlay.Overview.iOS".localized
 #endif
     }
 }
 
-struct AnomalyGuideView: View {
+struct HowToPlayOverviewView: View {
+    let mode: GameMode
+    let instructions: String
+
     var body: some View {
-        VStack(alignment: .leading, spacing: AnomalyGuideLayout.spacing) {
-            Text("AnomalyGuide.Title".localized)
-                .font(AnomalyGuideLayout.titleFont)
+        VStack(spacing: HowToPlayOverviewLayout.spacing) {
+            Label(mode.title, systemImage: mode.systemImage)
+                .font(HowToPlayOverviewLayout.titleFont)
                 .foregroundColor(.labelDark)
 
-            ForEach(AnomalyKind.allCases) { kind in
-                AnomalyGuideRow(kind: kind)
+            HowToPlayBoardPreview(mode: mode)
+                .frame(
+                    width: HowToPlayOverviewLayout.boardSize,
+                    height: HowToPlayOverviewLayout.boardSize
+                )
+
+            Text(instructions)
+                .font(HowToPlayOverviewLayout.descriptionFont)
+                .foregroundColor(.labelDark)
+                .multilineTextAlignment(.center)
+                .lineSpacing(HowToPlayOverviewLayout.lineSpacing)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+}
+
+struct HowToPlayBoardPreview: View {
+    let mode: GameMode
+    let fieldSize: Int
+
+    init(mode: GameMode, fieldSize: Int = 4) {
+        self.mode = mode
+        self.fieldSize = fieldSize
+    }
+
+    var body: some View {
+        GeometryReader { geometry in
+            let metrics = FieldLayoutMetrics(
+                containerSize: geometry.size,
+                fieldSize: fieldSize
+            )
+
+            ZStack {
+                ForEach(metrics.indices, id: \.self) { row in
+                    ForEach(metrics.indices, id: \.self) { column in
+                        FieldCellView(value: nil, animationsEnabled: false)
+                            .frame(
+                                width: metrics.cellSize.width,
+                                height: metrics.cellSize.height
+                            )
+                            .position(
+                                metrics.center(
+                                    for: Coordinate(row: row, col: column)
+                                )
+                            )
+                    }
+                }
+
+                ForEach(previewCells) { cell in
+                    FieldCellView(
+                        value: cell.value,
+                        kind: cell.kind,
+                        animationsEnabled: false
+                    )
+                    .frame(
+                        width: metrics.cellSize.width,
+                        height: metrics.cellSize.height
+                    )
+                    .position(metrics.center(for: cell.coordinate))
+                }
+            }
+            .background(Color.fieldForeground)
+            .cornerRadius(FieldLayout.cornerRadius)
+        }
+        .accessibilityHidden(true)
+    }
+}
+
+private extension HowToPlayBoardPreview {
+    var previewCells: [HowToPlayPreviewCell] {
+        let normalCells = (0 ..< fieldSize).flatMap { row in
+            (0 ..< fieldSize).compactMap { column -> HowToPlayPreviewCell? in
+                let flatIndex = row * fieldSize + column
+                guard flatIndex % HowToPlayBoard.emptyCellInterval != HowToPlayBoard.emptyCellOffset else {
+                    return nil
+                }
+
+                return HowToPlayPreviewCell(
+                    value: HowToPlayBoard.values[flatIndex % HowToPlayBoard.values.count],
+                    row: row,
+                    column: column
+                )
+            }
+        }
+
+        guard mode == .anomaly else {
+            return normalCells
+        }
+
+        let specialCells = [
+            HowToPlayPreviewCell(value: 0, row: 0, column: 1, kind: .wild),
+            HowToPlayPreviewCell(
+                value: 64,
+                row: fieldSize / 2,
+                column: fieldSize / 2,
+                kind: .frozen(remainingMoves: 5)
+            ),
+            HowToPlayPreviewCell(
+                value: 16,
+                row: fieldSize - 1,
+                column: fieldSize - 2,
+                kind: .power
+            ),
+            HowToPlayPreviewCell(
+                value: 128,
+                row: fieldSize - 1,
+                column: 0,
+                kind: .stone(remainingMoves: 4)
+            )
+        ]
+
+        let replacedCoordinates = Set(specialCells.map(\.coordinate))
+        return normalCells.filter {
+            !replacedCoordinates.contains($0.coordinate)
+        } + specialCells
+    }
+}
+
+private struct HowToPlayPreviewCell: Identifiable {
+    let value: Int
+    let coordinate: Coordinate
+    let kind: FieldCellKind
+
+    var id: Coordinate {
+        coordinate
+    }
+
+    init(
+        value: Int,
+        row: Int,
+        column: Int,
+        kind: FieldCellKind = .normal
+    ) {
+        self.value = value
+        coordinate = Coordinate(row: row, col: column)
+        self.kind = kind
+    }
+}
+
+struct AnomalyGuideView: View {
+    let kinds: [AnomalyKind]
+
+    init(kinds: [AnomalyKind] = AnomalyKind.allCases) {
+        self.kinds = kinds
+    }
+
+    @ViewBuilder
+    var body: some View {
+#if os(tvOS)
+        VStack(alignment: .leading, spacing: AnomalyGuideLayout.spacing) {
+            guideTitle
+
+            HStack(alignment: .top, spacing: AnomalyGuideLayout.columnSpacing) {
+                guideColumn(kinds: leftColumnKinds)
+
+                Divider()
+                    .overlay(Color.labelDark.opacity(AnomalyGuideLayout.dividerOpacity))
+                    .frame(height: AnomalyGuideLayout.dividerHeight)
+
+                guideColumn(kinds: rightColumnKinds)
             }
         }
         .frame(maxWidth: AnomalyGuideLayout.maxWidth)
+#else
+        VStack(alignment: .leading, spacing: AnomalyGuideLayout.spacing) {
+            guideTitle
+
+            guideRows
+        }
+        .frame(maxWidth: AnomalyGuideLayout.maxWidth)
+#endif
     }
+
+    var guideTitle: some View {
+        Text("AnomalyGuide.Title".localized)
+            .font(AnomalyGuideLayout.titleFont)
+            .foregroundColor(.labelDark)
+    }
+
+    var guideRows: some View {
+        ForEach(kinds) { kind in
+            AnomalyGuideRow(kind: kind)
+        }
+    }
+
+#if os(tvOS)
+    func guideColumn(kinds: [AnomalyKind]) -> some View {
+        VStack(alignment: .leading, spacing: AnomalyGuideLayout.spacing) {
+            ForEach(kinds) { kind in
+                AnomalyGuideRow(kind: kind)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    var leftColumnKinds: [AnomalyKind] {
+        kinds.enumerated().compactMap { index, kind in
+            index.isMultiple(of: 2) ? kind : nil
+        }
+    }
+
+    var rightColumnKinds: [AnomalyKind] {
+        kinds.enumerated().compactMap { index, kind in
+            index.isMultiple(of: 2) ? nil : kind
+        }
+    }
+#endif
 }
 
 private struct AnomalyGuideRow: View {
@@ -105,11 +324,17 @@ private struct AnomalyGuideRow: View {
 
     var body: some View {
         HStack(spacing: AnomalyGuideLayout.rowSpacing) {
-            FieldCellView(value: sampleValue, kind: cellKind)
-                .frame(
-                    width: AnomalyGuideLayout.tileSize,
-                    height: AnomalyGuideLayout.tileSize
+            ZStack {
+                FieldCellView(
+                    value: sampleValue,
+                    kind: cellKind,
+                    animationsEnabled: false
                 )
+            }
+            .frame(
+                width: AnomalyGuideLayout.tileSize,
+                height: AnomalyGuideLayout.tileSize
+            )
 
             VStack(alignment: .leading, spacing: AnomalyGuideLayout.textSpacing) {
                 Label(kind.title, systemImage: kind.systemImage)
@@ -158,32 +383,57 @@ private struct AnomalyGuideRow: View {
     }
 }
 
-private enum HowToPlayLayout {
-    static let spacing: CGFloat = 20
-    static let sectionSpacing: CGFloat = 20
-    static let padding: CGFloat = 24
-    static let contentMaxWidth: CGFloat = 560
-    static let pickerMaxWidth: CGFloat = 360
+private enum HowToPlayBoard {
+    static let values = [
+        2, 2, 4, 4, 8, 8, 16, 16,
+        32, 32, 64, 64, 128, 256, 512, 1024
+    ]
+    static let emptyCellInterval = 5
+    static let emptyCellOffset = 2
+}
 
-#if os(macOS)
-    static let minimumWidth: CGFloat = 480
-    static let minimumHeight: CGFloat = 560
+private enum HowToPlayLayout {
+    static let contentMaxWidth: CGFloat = 640
+    static let pickerMaxWidth: CGFloat = 360
+    static let horizontalContentPadding: CGFloat = 20
+    static let verticalContentPadding: CGFloat = 20
+    static let scrollContentBottomPadding: CGFloat = 24
+    static let sectionSpacing: CGFloat = 20
+    static let contentSpacing: CGFloat = 28
+    static let minimumWidth: CGFloat = 320
+    static let minimumHeight: CGFloat = 500
+    static let titleFont = Font.title.bold()
+}
+
+private enum HowToPlayOverviewLayout {
+#if os(tvOS)
+    static let spacing: CGFloat = 24
+    static let boardSize: CGFloat = 420
+    static let lineSpacing: CGFloat = 8
+    static let titleFont = Font.title.bold()
+    static let descriptionFont = Font.title2
 #else
-    static let minimumWidth: CGFloat = 0
-    static let minimumHeight: CGFloat = 0
+    static let spacing: CGFloat = 18
+    static let boardSize: CGFloat = 280
+    static let lineSpacing: CGFloat = 3
+    static let titleFont = Font.title2.bold()
+    static let descriptionFont = Font.callout
 #endif
 }
 
 private enum AnomalyGuideLayout {
 #if os(tvOS)
-    static let spacing: CGFloat = 20
-    static let rowSpacing: CGFloat = 24
-    static let textSpacing: CGFloat = 8
-    static let tileSize: CGFloat = 96
-    static let maxWidth: CGFloat = 920
-    static let titleFont = Font.title.bold()
-    static let rowTitleFont = Font.title2.bold()
-    static let descriptionFont = Font.title3
+    static let spacing: CGFloat = 18
+    static let rowSpacing: CGFloat = 18
+    static let textSpacing: CGFloat = 4
+    static let tileSize: CGFloat = 78
+    static let maxWidth: CGFloat = 1460
+    static let columnSpacing: CGFloat = 52
+    static let dividerHeight: CGFloat = 410
+    static let dividerOpacity: Double = 0.3
+    static let titleFont = Font.title2.bold()
+    static let rowTitleFont = Font.title3.bold()
+    static let descriptionFont = Font.body
 #else
     static let spacing: CGFloat = 16
     static let rowSpacing: CGFloat = 16

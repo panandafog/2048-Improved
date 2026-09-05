@@ -43,6 +43,8 @@
 "Cancel" = "Cancel";
 "Back" = "Back";
 "Done" = "Done";
+"Previous" = "Previous";
+"Next" = "Next";
 "Score" = "Score";
 "Best" = "Best";
 "BestScore" = "Best Score";
@@ -84,21 +86,8 @@
 "Challenge.Tile2048.Title" = "Journey Complete";
 "Challenge.Tile2048.Description" = "Create the legendary 2,048 tile.";
 
-"HowToPlay.macOS" = "
-Use swipe or arrow keys to move the tiles.
-Tiles with the same number merge into one when they touch.
-Add them up to reach 2048!
-";
-
-"HowToPlay.other" = "
-Use swipe to move the tiles.
-Tiles with the same number merge into one when they touch.
-Add them up to reach 2048!
-";
-
-"HowToPlay.tvOS" = "
-Use the Apple TV Remote to move the tiles.
-Press the remote buttons or swipe to move up, down, left, or right.
-Tiles with the same number merge into one when they touch.
-Add them up to reach 2048!
-";
+"HowToPlay.Overview.iOS" = "Swipe in any direction to slide every tile. Equal numbers merge and add to your score. Build a 2,048 tile to win.";
+"HowToPlay.Overview.macOS" = "Swipe or use the arrow keys to slide every tile. Equal numbers merge and add to your score. Build a 2,048 tile to win.";
+"HowToPlay.Overview.tvOS" = "Swipe or press a direction on the Apple TV Remote to slide every tile. Equal numbers merge and add to your score. Build a 2,048 tile to win.";
+"HowToPlay.Overview.Anomaly" = "Unlike Classic, every 10 successful moves adds one of five special tiles. Their effects can accelerate your progress or reshape the board.";
+"HowToPlay.Page" = "%d of %d";

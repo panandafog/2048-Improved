@@ -12,10 +12,16 @@ struct FieldCellView: View {
     
     let value: Int?
     let kind: FieldCellKind
+    let animationsEnabled: Bool
 
-    init(value: Int?, kind: FieldCellKind = .normal) {
+    init(
+        value: Int?,
+        kind: FieldCellKind = .normal,
+        animationsEnabled: Bool = true
+    ) {
         self.value = value
         self.kind = kind
+        self.animationsEnabled = animationsEnabled
     }
     
     // MARK: - Body
@@ -38,7 +44,7 @@ private extension FieldCellView {
         Rectangle()
             .cornerRadius(.CornerRadius.fieldCell)
             .foregroundColor(backgroundColor)
-            .animation(FieldCellAnimation.valueChange, value: kind)
+            .animation(valueChangeAnimation, value: kind)
     }
 
     var backgroundColor: Color {
@@ -70,8 +76,8 @@ private extension FieldCellView {
                 .id(value)
                 .foregroundColor(labelColor(for: value))
                 .font(.system(size: fontSize(for: size)))
-                .transition(FieldCellAnimation.valueTransition)
-                .animation(FieldCellAnimation.valueChange, value: value)
+                .transition(valueTransition)
+                .animation(valueChangeAnimation, value: value)
         }
     }
     
@@ -96,29 +102,44 @@ private extension FieldCellView {
 
     @ViewBuilder
     func effectBadge(in size: CGSize) -> some View {
-        VStack {
-            HStack {
-                Spacer()
-
-                switch kind {
-                case .frozen(let remainingMoves):
-                    Label(String(remainingMoves), systemImage: "snowflake")
-                case .bomb:
-                    Image(systemName: "burst.fill")
-                case .power:
-                    Image(systemName: "bolt.fill")
-                case .stone(let remainingMoves):
-                    Label(String(remainingMoves), systemImage: "lock.fill")
-                default:
-                    EmptyView()
-                }
+        Group {
+            switch kind {
+            case .frozen(let remainingMoves):
+                counterBadge(
+                    value: remainingMoves,
+                    systemImage: "snowflake",
+                    size: size
+                )
+            case .bomb:
+                Image(systemName: "burst.fill")
+            case .power:
+                Image(systemName: "bolt.fill")
+            case .stone(let remainingMoves):
+                counterBadge(
+                    value: remainingMoves,
+                    systemImage: "lock.fill",
+                    size: size
+                )
+            default:
+                EmptyView()
             }
-
-            Spacer()
         }
         .font(.system(size: min(size.width, size.height) * FieldCellLayout.badgeSizeFactor, weight: .bold))
         .foregroundColor(effectBadgeColor)
         .padding(min(size.width, size.height) * FieldCellLayout.badgePaddingFactor)
+        .frame(width: size.width, height: size.height, alignment: .topTrailing)
+    }
+
+    func counterBadge(
+        value: Int,
+        systemImage: String,
+        size: CGSize
+    ) -> some View {
+        HStack(spacing: min(size.width, size.height) * FieldCellLayout.badgeSpacingFactor) {
+            Image(systemName: systemImage)
+            Text(String(value))
+        }
+        .fixedSize()
     }
 
     var effectBadgeColor: Color {
@@ -129,6 +150,14 @@ private extension FieldCellView {
             return .labelLight
         }
     }
+
+    var valueChangeAnimation: Animation? {
+        animationsEnabled ? FieldCellAnimation.valueChange : nil
+    }
+
+    var valueTransition: AnyTransition {
+        animationsEnabled ? FieldCellAnimation.valueTransition : .identity
+    }
 }
 
 // MARK: - Layout
@@ -136,8 +165,9 @@ private extension FieldCellView {
 private enum FieldCellLayout {
     static let fontSizeFactor: CGFloat = 0.4
     static let symbolSizeFactor: CGFloat = 0.34
-    static let badgeSizeFactor: CGFloat = 0.13
+    static let badgeSizeFactor: CGFloat = 0.15
     static let badgePaddingFactor: CGFloat = 0.08
+    static let badgeSpacingFactor: CGFloat = 0.025
 }
 
 // MARK: - Animation Parameters

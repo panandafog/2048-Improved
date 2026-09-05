@@ -133,7 +133,9 @@ final class Field: ObservableObject {
         if didWin {
             notifyChange()
         } else {
-            try generateNewCell(isAnomaly: generatesAnomaly && mode == .anomaly)
+            try generateCellsAfterMove(
+                includesAnomaly: generatesAnomaly && mode == .anomaly
+            )
         }
 
         return FieldMoveResult(
@@ -354,6 +356,21 @@ private extension Field {
     }
 
     // MARK: - Generation
+
+    var generatedCellCountPerMove: Int {
+        max(1, fieldSize - 3)
+    }
+
+    func generateCellsAfterMove(includesAnomaly: Bool) throws {
+        let generatedCellCount = min(
+            generatedCellCountPerMove,
+            emptyCoordinates.count
+        )
+
+        for index in 0 ..< generatedCellCount {
+            try generateNewCell(isAnomaly: includesAnomaly && index == 0)
+        }
+    }
 
     func makeNormalCell(at coordinate: Coordinate) -> FieldCell {
         FieldCell(value: newElementValue, coordinate: coordinate)
