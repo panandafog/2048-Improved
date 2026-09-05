@@ -15,13 +15,19 @@ class FieldCell: Identifiable, Hashable, ObservableObject {
     // MARK: - State
     
     @Published var value: Int
+    @Published var kind: FieldCellKind
     var coordinate: Coordinate
     
     // MARK: - Lifecycle
     
-    init(value: Int, coordinate: Coordinate) {
+    init(
+        value: Int,
+        coordinate: Coordinate,
+        kind: FieldCellKind = .normal
+    ) {
         self.value = value
         self.coordinate = coordinate
+        self.kind = kind
     }
     
     // MARK: - Hashable

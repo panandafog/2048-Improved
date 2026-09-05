@@ -35,15 +35,14 @@ struct ContentView: View {
                     game: game,
                     onShowChallenges: { showChallenges = true }
                 )
-                if showHowToPlay {
-                    Divider()
-                    HowToPlayView()
-                }
                 Spacer()
             }
             Spacer()
         }
         .background(Color.gameForeground)
+        .sheet(isPresented: $showHowToPlay) {
+            HowToPlayView(initialMode: game.mode)
+        }
         .sheet(isPresented: $showChallenges) {
             ChallengesView(store: challenges)
         }

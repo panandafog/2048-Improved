@@ -18,8 +18,30 @@
 "Button.ContinueGame" = "Continue Game";
 "Button.Challenges" = "Challenges";
 
+"ModeSelection.Title" = "Choose a Mode";
+"NewGame.Title" = "New Game";
+"GameMode.Title" = "Mode";
+"BoardSize.Title" = "Board Size";
+"BoardSize.Format" = "%d × %d";
+"GameMode.Classic" = "Classic";
+"GameMode.Anomaly" = "Anomaly";
+"Anomaly.Wild" = "Wild";
+"Anomaly.Frozen" = "Frozen";
+"Anomaly.Bomb" = "Bomb";
+"Anomaly.Power" = "Power";
+"Anomaly.Stone" = "Stone";
+"Anomaly.Next" = "Next %@ in %d";
+"AnomalyGuide.Title" = "Anomaly Tiles";
+"AnomalyGuide.Play" = "Play Anomaly";
+"Anomaly.Wild.Description" = "Merges with any unfrozen tile. Two Wild tiles create a 4.";
+"Anomaly.Frozen.Description" = "Moves normally but cannot merge. It thaws after 3–8 successful moves.";
+"Anomaly.Bomb.Description" = "When merged, clears the cells directly above, below, left, and right.";
+"Anomaly.Power.Description" = "Appears as 8 or 16 and creates four times its value when merged.";
+"Anomaly.Stone.Description" = "Does not move or merge. It becomes normal after 3–8 successful moves.";
+
 "Start" = "Start";
 "Cancel" = "Cancel";
+"Back" = "Back";
 "Done" = "Done";
 "Score" = "Score";
 "Best" = "Best";

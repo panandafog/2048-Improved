@@ -42,6 +42,8 @@ struct TVContentView: View {
                 howToPlayScreen
             case .challenges:
                 challengesScreen
+            case .modeSelection:
+                modeSelectionScreen
             case .menu:
                 menu
             }
@@ -64,7 +66,7 @@ private extension TVContentView {
                     .buttonStyle(TVMenuButtonStyle())
             }
             
-            Button("Button.StartGame".localized, action: startGame)
+            Button("Button.StartGame".localized, action: showModeSelection)
                 .buttonStyle(TVMenuButtonStyle())
 
             Button("Button.Challenges".localized, action: showChallenges)
@@ -77,17 +79,6 @@ private extension TVContentView {
         .overlay(alignment: .bottomTrailing) {
             menuScoreRow
                 .padding()
-        }
-        .alert(
-            "Alert.NewGame.Title".localized,
-            isPresented: $game.newGameRequested
-        ) {
-            Button("Start".localized, role: .destructive) {
-                confirmStartNewGame()
-            }
-            Button("Cancel".localized, role: .cancel) {
-                game.cancelNewGame()
-            }
         }
     }
     
@@ -122,7 +113,10 @@ private extension TVContentView {
     }
     
     var howToPlayScreen: some View {
-        TVHowToPlayView(onExitCommand: returnToMenu)
+        TVHowToPlayView(
+            initialMode: game.mode,
+            onExitCommand: returnToMenu
+        )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
@@ -130,27 +124,26 @@ private extension TVContentView {
         ChallengesView(store: challenges, onExitCommand: returnToMenu)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
+
+    var modeSelectionScreen: some View {
+        ModeSelectionView(
+            initialConfiguration: game.configuration,
+            onSelect: startNewGame,
+            onCancel: returnToMenu
+        )
+    }
 }
 
 private extension TVContentView {
     // MARK: - Actions
     
-    func startGame() {
-        guard !game.hasSaveableGame else {
-            game.requestNewGame()
-            return
-        }
-        
-        startNewGame()
+    func showModeSelection() {
+        screen = .modeSelection
     }
-    
-    func confirmStartNewGame() {
-        startNewGame()
-    }
-    
-    func startNewGame() {
+
+    func startNewGame(configuration: GameConfiguration) {
         do {
-            try game.startNewGame()
+            try game.startNewGame(configuration: configuration)
             screen = .game
         } catch {
             print("Can't start the game")
@@ -201,6 +194,7 @@ private enum TVScreen {
     case game
     case howToPlay
     case challenges
+    case modeSelection
 }
 
 // MARK: - Preview

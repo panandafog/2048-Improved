@@ -53,7 +53,7 @@ private extension FieldView {
     
     func activeCells(metrics: FieldLayoutMetrics) -> some View {
         ForEach(cells) { cell in
-            FieldCellView(value: cell.value)
+            FieldCellView(value: cell.value, kind: cell.kind)
                 .compositingGroup()
                 .frame(width: metrics.cellSize.width, height: metrics.cellSize.height)
                 .position(metrics.center(for: cell.coordinate))
@@ -117,12 +117,19 @@ private extension FieldView {
                 return RenderedFieldCell(snapshot: snapshot)
             }
             
-            valueUpdates.append(DelayedValueUpdate(id: snapshot.id, value: snapshot.value))
+            valueUpdates.append(
+                DelayedValueUpdate(
+                    id: snapshot.id,
+                    value: snapshot.value,
+                    kind: snapshot.kind
+                )
+            )
             
             // During a merge, keep the old value until movement finishes.
             return RenderedFieldCell(
                 id: snapshot.id,
                 value: currentCell.value,
+                kind: currentCell.kind,
                 coordinate: snapshot.coordinate
             )
         }
@@ -136,7 +143,8 @@ private extension FieldView {
     }
     
     func isMergedMovingCell(_ currentCell: RenderedFieldCell, snapshot: FieldCellSnapshot) -> Bool {
-        currentCell.value != snapshot.value && currentCell.coordinate != snapshot.coordinate
+        let didChangePresentation = currentCell.value != snapshot.value || currentCell.kind != snapshot.kind
+        return didChangePresentation && currentCell.coordinate != snapshot.coordinate
     }
 }
 
@@ -165,7 +173,7 @@ private extension FieldView {
     func scheduleValueUpdates(_ updates: [DelayedValueUpdate]) {
         updates.forEach { update in
             let workItem = DispatchWorkItem {
-                applyDelayedValue(update.value, to: update.id)
+                applyDelayedValue(update, to: update.id)
             }
             
             pendingValueUpdates[update.id] = workItem
@@ -223,7 +231,7 @@ private extension FieldView {
         scheduleFadeIn(for: newCells.map(\.id))
     }
     
-    func applyDelayedValue(_ value: Int, to id: UUID) {
+    func applyDelayedValue(_ update: DelayedValueUpdate, to id: UUID) {
         pendingValueUpdates[id] = nil
         
         guard let index = cells.firstIndex(where: { $0.id == id }) else {
@@ -231,7 +239,8 @@ private extension FieldView {
         }
         
         var updatedCells = cells
-        updatedCells[index].value = value
+        updatedCells[index].value = update.value
+        updatedCells[index].kind = update.kind
         
         withAnimation(FieldAnimation.merge) {
             cells = updatedCells

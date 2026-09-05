@@ -7,295 +7,417 @@
 
 import Foundation
 
-class Field: ObservableObject {
+struct FieldMoveResult {
+    let score: Int
+    let highestTile: Int
+    let didWin: Bool
+}
+
+final class Field: ObservableObject {
     // MARK: - State
-    
+
     private(set) var cells = Set<FieldCell>()
     let fieldSize: Int
     let winValue: Int
-    
+    let mode: GameMode
+
+    private var anomalyDeck: [AnomalyKind] = []
+    private var lastAnomalyKind: AnomalyKind?
+
     // MARK: - Derived State
-    
+
     var emptyCoordinates: [Coordinate] {
         var coordinates: [Coordinate] = []
+
         for row in 0 ..< fieldSize {
             for col in 0 ..< fieldSize where getCell(at: Coordinate(row: row, col: col)) == nil {
                 coordinates.append(Coordinate(row: row, col: col))
             }
         }
+
         return coordinates
     }
-    
+
     var newElementValue: Int {
         Int(pow(2.0, Double(Int.random(in: 1...2))))
     }
-    
-    var isFull: Bool {
-        cells.count >= fieldSize * fieldSize
+
+    var highestTile: Int {
+        cells.map(\.value).max() ?? 0
     }
-    
+
     var canMove: Bool {
-        guard isFull else {
-            return true
-        }
-        
-        for rowInd in 0 ..< fieldSize {
-            for colInd in 0 ..< fieldSize {
-                let current = getCell(at: .init(row: rowInd, col: colInd))?.value ?? 0
-                
-                if colInd != fieldSize - 1 {
-                    let right = getCell(at: .init(row: rowInd, col: colInd + 1))?.value ?? 0
-                    if current == right {
-                        return true
-                    }
+        let neighborOffsets = [
+            Coordinate(row: -1, col: 0),
+            Coordinate(row: 1, col: 0),
+            Coordinate(row: 0, col: -1),
+            Coordinate(row: 0, col: 1)
+        ]
+
+        for cell in cells where !cell.kind.isStone {
+            for offset in neighborOffsets {
+                let neighborCoordinate = Coordinate(
+                    row: cell.coordinate.row + offset.row,
+                    col: cell.coordinate.col + offset.col
+                )
+
+                guard isInsideField(neighborCoordinate) else {
+                    continue
                 }
-                
-                if rowInd != fieldSize - 1 {
-                    let bottom = getCell(at: .init(row: rowInd + 1, col: colInd))?.value ?? 0
-                    if current == bottom {
-                        return true
-                    }
+
+                guard let neighbor = getCell(at: neighborCoordinate) else {
+                    return true
+                }
+
+                if canMerge(cell, with: neighbor) {
+                    return true
                 }
             }
         }
-        
+
         return false
     }
-    
+
+    var nextAnomalyKind: AnomalyKind? {
+        mode == .anomaly ? anomalyDeck.first : nil
+    }
+
     // MARK: - Lifecycle
-    
-    init(fieldSize: Int, winValue: Int) {
+
+    init(fieldSize: Int, winValue: Int, mode: GameMode = .classic) {
         self.fieldSize = fieldSize
         self.winValue = winValue
+        self.mode = mode
+        refillAnomalyDeckIfNeeded()
     }
-    
+
     // MARK: - Cell Access
-    
+
     func getCell(at coordinate: Coordinate) -> FieldCell? {
         cells.first { $0.coordinate == coordinate }
     }
-    
+
+    func isInsideField(_ coordinate: Coordinate) -> Bool {
+        (0 ..< fieldSize).contains(coordinate.row)
+            && (0 ..< fieldSize).contains(coordinate.col)
+    }
+
     func setCell(_ newCell: FieldCell) {
         if let index = cells.firstIndex(where: {
-            $0.coordinate == newCell.coordinate ||
-            $0.id == newCell.id
+            $0.coordinate == newCell.coordinate || $0.id == newCell.id
         }) {
             cells.remove(at: index)
         }
+
         cells.insert(newCell)
-        
-        DispatchQueue.main.async { [self] in
-            objectWillChange.send()
-        }
+        notifyChange()
     }
-    
+
     // MARK: - Game Flow
-    
-    func generateNewCell() throws {
+
+    func generateNewCell(isAnomaly: Bool = false) throws {
         guard let coordinate = emptyCoordinates.randomElement() else {
             throw GameError.noFreeSpace
         }
-        setCell(FieldCell(value: newElementValue, coordinate: coordinate))
+
+        let cell = isAnomaly ? makeAnomalyCell(at: coordinate) : makeNormalCell(at: coordinate)
+        setCell(cell)
     }
-    
-    func move(_ direction: MoveDirection) throws -> Int {
-        let mergedSum = try moveCells(direction)
-        try generateNewCell()
-        
-        return mergedSum
+
+    func move(_ direction: MoveDirection, generatesAnomaly: Bool = false) throws -> FieldMoveResult {
+        let movement = try moveCells(direction)
+        advanceTimedCells()
+        explodeBombs(at: movement.explosionCenters)
+
+        let didWin = movement.highestMergedValue >= winValue
+        if didWin {
+            notifyChange()
+        } else {
+            try generateNewCell(isAnomaly: generatesAnomaly && mode == .anomaly)
+        }
+
+        return FieldMoveResult(
+            score: movement.score,
+            highestTile: highestTile,
+            didWin: didWin
+        )
     }
-    
+
     func reset() {
         cells = []
+        anomalyDeck = []
+        lastAnomalyKind = nil
+        refillAnomalyDeckIfNeeded()
+        notifyChange()
     }
-    
-    // MARK: - Movement
-    
-    private func moveCells(_ direction: MoveDirection) throws -> Int {
+}
+
+private extension Field {
+    struct MovementResult {
         var moved = false
-        var win = false
-        var mergedSum = 0
-        var mergedCellsIDs: Set<UUID> = []
-        
-        for firstIndex in 0 ..< fieldSize {
-            
-            var secondIndexSequence: any Sequence
-            if direction.isStraight {
-                secondIndexSequence = 1 ..< fieldSize
-            } else {
-                secondIndexSequence = stride(from: fieldSize - 2, to: -1, by: -1)
-            }
-            
-            for secondIndex in secondIndexSequence {
-                let secondIndex = secondIndex as! Int
-                
-                let currentCoordinate: Coordinate
-                if direction.isVertical {
-                    currentCoordinate = .init(row: secondIndex, col: firstIndex)
-                } else {
-                    currentCoordinate = .init(row: firstIndex, col: secondIndex)
-                }
-                
-                if let currentCell = getCell(at: currentCoordinate) {
-                    
-                    var searchIndexSequence: any Sequence
-                    if direction.isStraight {
-                        searchIndexSequence = stride(from: secondIndex - 1, to: -1, by: -1)
-                    } else {
-                        searchIndexSequence = secondIndex + 1 ..< fieldSize
-                    }
-                    
-                    for searchIndex in searchIndexSequence {
-                        let searchIndex = searchIndex as! Int
-                        
-                        var searchCell: FieldCell?
-                        if direction.isVertical {
-                            searchCell = getCell(at: .init(row: searchIndex, col: firstIndex))
-                        } else {
-                            searchCell = getCell(at: .init(row: firstIndex, col: searchIndex))
-                        }
-                        
-                        if let searchCell = searchCell {
-                            
-                            if searchCell.value == currentCell.value
-                                && !mergedCellsIDs.contains(currentCell.id)
-                                && !mergedCellsIDs.contains(searchCell.id) {
-                                // merge cells
-                                cells.remove(searchCell)
-                                
-                                currentCell.value *= 2
-                                if currentCell.value >= winValue {
-                                    win = true
-                                }
-                                
-                                currentCell.coordinate = searchCell.coordinate
-                                mergedCellsIDs.insert(currentCell.id)
-                                moved = true
-                                mergedSum += currentCell.value
-                            } else {
-                                // stop searching
-                                break
-                            }
-                            
-                        } else if searchCell == nil {
-                            // move cell
-                            if direction.isVertical {
-                                currentCell.coordinate = .init(row: searchIndex, col: firstIndex)
-                            } else {
-                                currentCell.coordinate = .init(row: firstIndex, col: searchIndex)
-                            }
-                            moved = true
-                        }
-                    }
-                }
+        var score = 0
+        var highestMergedValue = 0
+        var explosionCenters: Set<Coordinate> = []
+    }
+
+    struct MergeResult {
+        let value: Int
+        let explodes: Bool
+    }
+
+    // MARK: - Movement
+
+    func moveCells(_ direction: MoveDirection) throws -> MovementResult {
+        var result = MovementResult()
+
+        for lineIndex in 0 ..< fieldSize {
+            let coordinates = coordinates(for: lineIndex, direction: direction)
+
+            for segment in movableSegments(in: coordinates) {
+                let lineCells = segment.compactMap(getCell)
+                move(lineCells, to: segment, result: &result)
             }
         }
-        
-        guard moved else {
+
+        guard result.moved else {
             throw GameError.cantMove
         }
-        guard !win else {
-            throw GameError.win
-        }
-        
-        return mergedSum
+
+        return result
     }
-    
-    // MARK: - Legacy Direction-Specific Movement
-    
-//    private func moveUp() -> Bool {
-//        var moved = false
-//        for colInd in 0 ..< fieldSize {
-//            for currentRowInd in 1 ..< fieldSize {
-//                if let currentCell = getCell(at: .init(row: currentRowInd, col: colInd)) {
-//                    for searchRowInd in stride(from: currentRowInd - 1, to: -1, by: -1) {
-//                        let searchCell = getCell(at: .init(row: searchRowInd, col: colInd))
-//                        if let searchCell = searchCell,
-//                           searchCell.value == currentCell.value {
-//                            cells.remove(searchCell)
-//                            currentCell.value *= 2
-//                            currentCell.coordinate = searchCell.coordinate
-//                            moved = true
-//                        } else if searchCell == nil {
-//                            currentCell.coordinate = .init(row: searchRowInd, col: colInd)
-//                            moved = true
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        return moved
-//    }
-//
-//    private func moveDown() -> Bool {
-//        var moved = false
-//        for colInd in 0 ..< fieldSize {
-//            for currentRowInd in stride(from: fieldSize - 2, to: -1, by: -1) {
-//                if let currentCell = getCell(at: .init(row: currentRowInd, col: colInd)) {
-//                    for searchRowInd in currentRowInd + 1 ..< fieldSize {
-//                        let searchCell = getCell(at: .init(row: searchRowInd, col: colInd))
-//                        if let searchCell = searchCell,
-//                           searchCell.value == currentCell.value {
-//                            cells.remove(searchCell)
-//                            currentCell.value *= 2
-//                            currentCell.coordinate = searchCell.coordinate
-//                            moved = true
-//                        } else if searchCell == nil {
-//                            currentCell.coordinate = .init(row: searchRowInd, col: colInd)
-//                            moved = true
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        return moved
-//    }
-//
-//    private func moveLeft() -> Bool {
-//        var moved = false
-//        for rowInd in 0 ..< fieldSize {
-//            for currentColInd in 1 ..< fieldSize {
-//                if let currentCell = getCell(at: .init(row: rowInd, col: currentColInd)) {
-//                    for searchColInd in stride(from: currentColInd - 1, to: -1, by: -1) {
-//                        let searchCell = getCell(at: .init(row: rowInd, col: searchColInd))
-//                        if let searchCell = searchCell,
-//                           searchCell.value == currentCell.value {
-//                            cells.remove(searchCell)
-//                            currentCell.value *= 2
-//                            currentCell.coordinate = searchCell.coordinate
-//                            moved = true
-//                        } else if searchCell == nil {
-//                            currentCell.coordinate = .init(row: rowInd, col: searchColInd)
-//                            moved = true
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        return moved
-//    }
-//
-//    private func moveRight() -> Bool {
-//        var moved = false
-//        for rowInd in 0 ..< fieldSize {
-//            for currentColInd in stride(from: fieldSize - 2, to: -1, by: -1) {
-//                if let currentCell = getCell(at: .init(row: rowInd, col: currentColInd)) {
-//                    for searchColInd in currentColInd + 1 ..< fieldSize {
-//                        let searchCell = getCell(at: .init(row: rowInd, col: searchColInd))
-//                        if let searchCell = searchCell,
-//                           searchCell.value == currentCell.value {
-//                            cells.remove(searchCell)
-//                            currentCell.value *= 2
-//                            currentCell.coordinate = searchCell.coordinate
-//                            moved = true
-//                        } else if searchCell == nil {
-//                            currentCell.coordinate = .init(row: rowInd, col: searchColInd)
-//                            moved = true
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        return moved
-//    }
+
+    func move(
+        _ lineCells: [FieldCell],
+        to coordinates: [Coordinate],
+        result: inout MovementResult
+    ) {
+        var sourceIndex = 0
+        var destinationIndex = 0
+
+        while sourceIndex < lineCells.count {
+            let leadingCell = lineCells[sourceIndex]
+
+            if sourceIndex + 1 < lineCells.count {
+                let trailingCell = lineCells[sourceIndex + 1]
+
+                if let merge = mergeResult(for: leadingCell, and: trailingCell) {
+                    cells.remove(leadingCell)
+                    trailingCell.value = merge.value
+                    trailingCell.kind = .normal
+                    updateCoordinate(
+                        of: trailingCell,
+                        to: coordinates[destinationIndex],
+                        moved: &result.moved
+                    )
+
+                    result.moved = true
+                    result.score += merge.value
+                    result.highestMergedValue = max(result.highestMergedValue, merge.value)
+
+                    if merge.explodes {
+                        result.explosionCenters.insert(coordinates[destinationIndex])
+                    }
+
+                    sourceIndex += 2
+                    destinationIndex += 1
+                    continue
+                }
+            }
+
+            updateCoordinate(
+                of: leadingCell,
+                to: coordinates[destinationIndex],
+                moved: &result.moved
+            )
+            sourceIndex += 1
+            destinationIndex += 1
+        }
+    }
+
+    func updateCoordinate(
+        of cell: FieldCell,
+        to coordinate: Coordinate,
+        moved: inout Bool
+    ) {
+        if cell.coordinate != coordinate {
+            cell.coordinate = coordinate
+            moved = true
+        }
+    }
+
+    func coordinates(for lineIndex: Int, direction: MoveDirection) -> [Coordinate] {
+        let indices: [Int]
+
+        if direction.isStraight {
+            indices = Array(0 ..< fieldSize)
+        } else {
+            indices = Array((0 ..< fieldSize).reversed())
+        }
+
+        return indices.map { index in
+            if direction.isVertical {
+                return Coordinate(row: index, col: lineIndex)
+            }
+
+            return Coordinate(row: lineIndex, col: index)
+        }
+    }
+
+    func movableSegments(in coordinates: [Coordinate]) -> [[Coordinate]] {
+        var segments: [[Coordinate]] = []
+        var currentSegment: [Coordinate] = []
+
+        for coordinate in coordinates {
+            if getCell(at: coordinate)?.kind.isStone == true {
+                if !currentSegment.isEmpty {
+                    segments.append(currentSegment)
+                    currentSegment = []
+                }
+            } else {
+                currentSegment.append(coordinate)
+            }
+        }
+
+        if !currentSegment.isEmpty {
+            segments.append(currentSegment)
+        }
+
+        return segments
+    }
+
+    // MARK: - Merging
+
+    func canMerge(_ first: FieldCell, with second: FieldCell) -> Bool {
+        mergeResult(for: first, and: second) != nil
+    }
+
+    func mergeResult(for first: FieldCell, and second: FieldCell) -> MergeResult? {
+        guard !first.kind.preventsMerging, !second.kind.preventsMerging else {
+            return nil
+        }
+
+        let explodes = first.kind == .bomb || second.kind == .bomb
+        let multiplier = first.kind == .power || second.kind == .power ? 4 : 2
+
+        if first.kind == .wild, second.kind == .wild {
+            return MergeResult(value: 4, explodes: false)
+        }
+
+        if first.kind == .wild {
+            return MergeResult(value: second.value * multiplier, explodes: explodes)
+        }
+
+        if second.kind == .wild {
+            return MergeResult(value: first.value * multiplier, explodes: explodes)
+        }
+
+        guard first.value == second.value else {
+            return nil
+        }
+
+        return MergeResult(value: first.value * multiplier, explodes: explodes)
+    }
+
+    // MARK: - Effects
+
+    func advanceTimedCells() {
+        cells.forEach { cell in
+            switch cell.kind {
+            case .frozen(let remainingMoves):
+                cell.kind = remainingMoves <= 1
+                    ? .normal
+                    : .frozen(remainingMoves: remainingMoves - 1)
+            case .stone(let remainingMoves):
+                cell.kind = remainingMoves <= 1
+                    ? .normal
+                    : .stone(remainingMoves: remainingMoves - 1)
+            default:
+                break
+            }
+        }
+    }
+
+    func explodeBombs(at centers: Set<Coordinate>) {
+        guard !centers.isEmpty else {
+            return
+        }
+
+        let explodedCells = cells.filter { cell in
+            centers.contains { center in
+                let rowDistance = abs(cell.coordinate.row - center.row)
+                let columnDistance = abs(cell.coordinate.col - center.col)
+                return rowDistance + columnDistance == 1
+            }
+        }
+
+        explodedCells.forEach { cells.remove($0) }
+    }
+
+    // MARK: - Generation
+
+    func makeNormalCell(at coordinate: Coordinate) -> FieldCell {
+        FieldCell(value: newElementValue, coordinate: coordinate)
+    }
+
+    func makeAnomalyCell(at coordinate: Coordinate) -> FieldCell {
+        let kind = takeNextAnomalyKind()
+
+        switch kind {
+        case .wild:
+            return FieldCell(value: 0, coordinate: coordinate, kind: .wild)
+        case .frozen:
+            return FieldCell(
+                value: newElementValue,
+                coordinate: coordinate,
+                kind: .frozen(remainingMoves: anomalyCountdown)
+            )
+        case .bomb:
+            return FieldCell(value: newElementValue, coordinate: coordinate, kind: .bomb)
+        case .power:
+            return FieldCell(value: powerValue, coordinate: coordinate, kind: .power)
+        case .stone:
+            return FieldCell(
+                value: newElementValue,
+                coordinate: coordinate,
+                kind: .stone(remainingMoves: anomalyCountdown)
+            )
+        }
+    }
+
+    var anomalyCountdown: Int {
+        Int.random(in: 3 ... 8)
+    }
+
+    var powerValue: Int {
+        Bool.random() ? 8 : 16
+    }
+
+    func takeNextAnomalyKind() -> AnomalyKind {
+        refillAnomalyDeckIfNeeded()
+        let kind = anomalyDeck.removeFirst()
+        lastAnomalyKind = kind
+        refillAnomalyDeckIfNeeded()
+        return kind
+    }
+
+    func refillAnomalyDeckIfNeeded() {
+        guard mode == .anomaly, anomalyDeck.isEmpty else {
+            return
+        }
+
+        var newDeck = AnomalyKind.allCases.shuffled()
+        if newDeck.first == lastAnomalyKind, newDeck.count > 1 {
+            newDeck.swapAt(0, 1)
+        }
+
+        anomalyDeck = newDeck
+    }
+
+    // MARK: - Observation
+
+    func notifyChange() {
+        DispatchQueue.main.async { [weak self] in
+            self?.objectWillChange.send()
+        }
+    }
 }

@@ -11,7 +11,9 @@ import SwiftUI
 class GameModel: ObservableObject {
     // MARK: - State
     
-    var field: Field
+    @Published private(set) var field: Field
+    @Published private(set) var mode: GameMode
+    @Published private(set) var boardSize: BoardSize
     
     @Published var score: Int = 0
     @Published var victory = false
@@ -22,12 +24,11 @@ class GameModel: ObservableObject {
     
     // MARK: - Score Persistence
     
-    @Published var bestScore: Int = ScoreRepository.bestScore {
+    @Published var bestScore: Int {
         didSet {
-            ScoreRepository.bestScore = bestScore
+            ScoreRepository.setBestScore(bestScore, for: configuration)
         }
     }
-    @Published var newGameRequested = false
     
     // MARK: - Derived State
     
@@ -38,23 +39,52 @@ class GameModel: ObservableObject {
     var hasSaveableGame: Bool {
         hasMadeMove && !gameEnded
     }
+
+    var configuration: GameConfiguration {
+        GameConfiguration(mode: mode, boardSize: boardSize)
+    }
+
+    var nextAnomalyKind: AnomalyKind? {
+        field.nextAnomalyKind
+    }
+
+    var movesUntilNextAnomaly: Int? {
+        guard mode == .anomaly else {
+            return nil
+        }
+
+        return Self.anomalyInterval - moveCount % Self.anomalyInterval
+    }
+
+    var anomalyProgress: Double {
+        guard mode == .anomaly else {
+            return 0
+        }
+
+        return Double(moveCount % Self.anomalyInterval) / Double(Self.anomalyInterval)
+    }
     
     // MARK: - Private Properties
     
-    private(set) var fieldSize: Int
     private var moveCount = 0
-    
-    private let calculationsQueue = DispatchQueue(
-        label: "game.concurrent.queue",
-        qos: .userInitiated,
-        attributes: .concurrent
-    )
+    private static let anomalyInterval = 10
     
     // MARK: - Lifecycle
     
-    init(fieldSize: Int = 4, winValue: Int = 2048) {
-        self.fieldSize = fieldSize
-        field = .init(fieldSize: fieldSize, winValue: winValue)
+    init(
+        boardSize: BoardSize = .standard,
+        winValue: Int = 2048,
+        mode: GameMode = .classic
+    ) {
+        self.mode = mode
+        self.boardSize = boardSize
+        let configuration = GameConfiguration(mode: mode, boardSize: boardSize)
+        field = Field(
+            fieldSize: boardSize.rawValue,
+            winValue: winValue,
+            mode: mode
+        )
+        bestScore = ScoreRepository.bestScore(for: configuration)
     }
     
     // MARK: - Game Flow
@@ -74,48 +104,52 @@ class GameModel: ObservableObject {
             return
         }
         
-        calculationsQueue.async { [self] in
-            do {
-                let moveScore = try field.move(direction)
-                let highestTile = field.cells.map(\.value).max() ?? 0
-                DispatchQueue.main.async { [self] in
-                    hasMadeMove = true
-                    score += moveScore
-                    bestScore = max(score, bestScore)
-                    moveCount += 1
-                    publishProgress(highestTile: highestTile)
-                    if !field.canMove { lose = true }
-                }
-            } catch GameError.win {
-                let highestTile = field.cells.map(\.value).max() ?? field.winValue
-                DispatchQueue.main.async { [self] in
-                    hasMadeMove = true
-                    moveCount += 1
-                    publishProgress(highestTile: highestTile)
-                    victory = true
-                }
-            } catch GameError.cantMove {
-                print("cantMove")
-            } catch GameError.noFreeSpace {
-                DispatchQueue.main.async { [self] in
-                    lose = true
-                }
-            } catch {}
+        do {
+            let result = try field.move(
+                direction,
+                generatesAnomaly: shouldGenerateAnomaly
+            )
+            hasMadeMove = true
+            score += result.score
+            bestScore = max(score, bestScore)
+            moveCount += 1
+            publishProgress(highestTile: result.highestTile)
+
+            if result.didWin {
+                victory = true
+            } else if !field.canMove {
+                lose = true
+            }
+        } catch GameError.cantMove {
+            print("cantMove")
+        } catch GameError.noFreeSpace {
+            lose = true
+        } catch {
+            return
         }
     }
     
     // MARK: - New Game Flow
     
-    func requestNewGame() {
-        newGameRequested = true
-    }
-    
-    func startNewGame() throws {
+    func startNewGame(configuration newConfiguration: GameConfiguration? = nil) throws {
+        let targetConfiguration = newConfiguration ?? configuration
+
+        if targetConfiguration != configuration {
+            mode = targetConfiguration.mode
+            boardSize = targetConfiguration.boardSize
+            field = Field(
+                fieldSize: targetConfiguration.boardSize.rawValue,
+                winValue: field.winValue,
+                mode: targetConfiguration.mode
+            )
+            bestScore = ScoreRepository.bestScore(for: targetConfiguration)
+        } else {
+            field.reset()
+        }
+
         score = 0
         victory = false
         lose = false
-        newGameRequested = false
-        field.reset()
         hasStarted = false
         hasMadeMove = false
         moveCount = 0
@@ -125,15 +159,15 @@ class GameModel: ObservableObject {
         objectWillChange.send()
     }
     
-    func cancelNewGame() {
-        newGameRequested = false
-    }
-
     private func publishProgress(highestTile: Int) {
         progress = GameProgress(
             score: score,
             moveCount: moveCount,
             highestTile: highestTile
         )
+    }
+
+    private var shouldGenerateAnomaly: Bool {
+        mode == .anomaly && (moveCount + 1).isMultiple(of: Self.anomalyInterval)
     }
 }

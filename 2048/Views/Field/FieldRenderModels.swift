@@ -21,6 +21,7 @@ struct FieldRenderUpdate {
 struct DelayedValueUpdate {
     let id: UUID
     let value: Int
+    let kind: FieldCellKind
 }
 
 // MARK: - Rendered Cell
@@ -30,6 +31,7 @@ struct RenderedFieldCell: Identifiable, Equatable {
     
     let id: UUID
     var value: Int
+    var kind: FieldCellKind
     var coordinate: Coordinate
     var isFadingIn: Bool
     
@@ -38,11 +40,13 @@ struct RenderedFieldCell: Identifiable, Equatable {
     init(
         id: UUID,
         value: Int,
+        kind: FieldCellKind,
         coordinate: Coordinate,
         isFadingIn: Bool = false
     ) {
         self.id = id
         self.value = value
+        self.kind = kind
         self.coordinate = coordinate
         self.isFadingIn = isFadingIn
     }
@@ -51,6 +55,7 @@ struct RenderedFieldCell: Identifiable, Equatable {
         self.init(
             id: snapshot.id,
             value: snapshot.value,
+            kind: snapshot.kind,
             coordinate: snapshot.coordinate,
             isFadingIn: isFadingIn
         )
@@ -62,11 +67,13 @@ struct RenderedFieldCell: Identifiable, Equatable {
 struct FieldCellSnapshot: Identifiable, Equatable {
     let id: UUID
     let value: Int
+    let kind: FieldCellKind
     let coordinate: Coordinate
     
     init(cell: FieldCell) {
         id = cell.id
         value = cell.value
+        kind = cell.kind
         coordinate = cell.coordinate
     }
 }

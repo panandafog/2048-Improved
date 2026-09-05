@@ -12,6 +12,7 @@ struct GameView: View {
     
     @StateObject var game: GameModel
     @StateObject private var inputController = GameInputController()
+    @State private var showModeSelection = false
     @Binding var showHowToPlay: Bool
     private let showsBottomControls: Bool
     private let onShowChallenges: () -> Void
@@ -23,34 +24,46 @@ struct GameView: View {
     
     private static let scoreStackHeight: CGFloat = 60
     private static let bottomStackHeight: CGFloat = 60
+    private static let anomalyStatusHeight: CGFloat = 36
     
 #if os(tvOS)
     private static let verticalSpacing: CGFloat = 50
     private static let maxFieldSize: CGFloat = 760
-    private static let minFieldSize: CGFloat = 420
+    private static let classicMinFieldSize: CGFloat = 420
+    private static let anomalyMinFieldSize: CGFloat = 420
     private static let defaultShowsBottomControls = false
 #elseif os(macOS)
     private static let verticalSpacing: CGFloat = 10
     private static let maxFieldSize: CGFloat = 500
-    private static let minFieldSize: CGFloat = 400
+    private static let classicMinFieldSize: CGFloat = 320
+    private static let anomalyMinFieldSize: CGFloat = 400
     private static let defaultShowsBottomControls = true
 #else
     private static let verticalSpacing: CGFloat = 10
     private static let maxFieldSize: CGFloat = 500
-    private static let minFieldSize: CGFloat = 300
+    private static let classicMinFieldSize: CGFloat = 300
+    private static let anomalyMinFieldSize: CGFloat = 300
     private static let defaultShowsBottomControls = true
 #endif
+
+    private var minimumFieldSize: CGFloat {
+        game.mode == .anomaly
+            ? Self.anomalyMinFieldSize
+            : Self.classicMinFieldSize
+    }
     
     private var bottomControlsHeight: CGFloat {
         showsBottomControls ? Self.bottomStackHeight : 0
     }
     
     private var verticalSpacingCount: CGFloat {
-        showsBottomControls ? 2 : 1
+        let baseSpacingCount: CGFloat = showsBottomControls ? 2 : 1
+        return game.mode == .anomaly ? baseSpacingCount + 1 : baseSpacingCount
     }
     
     private var notFieldHeight: CGFloat {
-        Self.scoreStackHeight + Self.verticalSpacing * verticalSpacingCount + bottomControlsHeight
+        let statusHeight = game.mode == .anomaly ? Self.anomalyStatusHeight : 0
+        return Self.scoreStackHeight + statusHeight + Self.verticalSpacing * verticalSpacingCount + bottomControlsHeight
     }
     
     // MARK: - Lifecycle
@@ -91,6 +104,11 @@ struct GameView: View {
                     width: fieldSize,
                     height: Self.scoreStackHeight
                 )
+
+                if game.mode == .anomaly {
+                    AnomalyStatusView(game: game)
+                        .frame(width: fieldSize, height: Self.anomalyStatusHeight)
+                }
                 
                 FieldView(game: game)
                     .frame(width: fieldSize, height: fieldSize)
@@ -113,22 +131,11 @@ struct GameView: View {
             )
         }
         .alert(
-            "Alert.NewGame.Title".localized,
-            isPresented: $game.newGameRequested
-        ) {
-            Button("Start".localized, role: .destructive) {
-                startNewGame()
-            }
-            Button("Cancel".localized, role: .cancel) {
-                game.cancelNewGame()
-            }
-        }
-        .alert(
             "Alert.Victory.Title".localized,
             isPresented: $game.victory
         ) {
             Button("Alert.Victory.Button.NewGame".localized, role: .cancel) {
-                startNewGame()
+                startNewGame(configuration: game.configuration)
             }
         }
         .alert(
@@ -136,16 +143,25 @@ struct GameView: View {
             isPresented: $game.lose
         ) {
             Button("Alert.Lose.Button.NewGame".localized, role: .cancel) {
-                startNewGame()
+                startNewGame(configuration: game.configuration)
             }
         }
         .frame(
-            minWidth: Self.minFieldSize,
+            minWidth: minimumFieldSize,
             maxWidth: Self.maxFieldSize,
-            minHeight: Self.minFieldSize + notFieldHeight,
+            minHeight: minimumFieldSize + notFieldHeight,
             maxHeight: Self.maxFieldSize + notFieldHeight
         )
         .background(Color.gameForeground)
+#if !os(tvOS)
+        .sheet(isPresented: $showModeSelection) {
+            ModeSelectionView(
+                initialConfiguration: game.configuration,
+                onSelect: startNewGame,
+                onCancel: { showModeSelection = false }
+            )
+        }
+#endif
 #if os(macOS)
         .background {
             GameKeyboardInputView { direction in
@@ -187,17 +203,13 @@ private extension GameView {
     }
     
     func handleNewGameRequest() {
-        guard game.hasSaveableGame else {
-            startNewGame()
-            return
-        }
-        
-        game.requestNewGame()
+        showModeSelection = true
     }
     
-    func startNewGame() {
+    func startNewGame(configuration: GameConfiguration) {
         do {
-            try game.startNewGame()
+            try game.startNewGame(configuration: configuration)
+            showModeSelection = false
         } catch {
             print("Can't start the game")
         }

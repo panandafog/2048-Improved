@@ -14,6 +14,11 @@ extension Color {
     static let fieldForeground = Color("FieldForeground")
     static let buttonBackgroundPrimary = Color("ButtonBackgroundPrimary")
     static let buttonBackgroundSecondary = Color("ButtonBackgroundSecondary")
+    static let anomalyWild = Color("AnomalyWild")
+    static let anomalyFrozen = Color("AnomalyFrozen")
+    static let anomalyBomb = Color("AnomalyBomb")
+    static let anomalyPower = Color("AnomalyPower")
+    static let anomalyStone = Color("AnomalyStone")
     
     // MARK: - Labels
     
