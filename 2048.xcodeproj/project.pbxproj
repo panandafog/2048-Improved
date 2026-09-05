@@ -47,6 +47,12 @@
 		0BFA00222D12000100000022 /* GameButtonLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFA00212D12000100000021 /* GameButtonLayout.swift */; };
 		0BFA00242D12000100000024 /* GameButtonMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFA00232D12000100000023 /* GameButtonMetrics.swift */; };
 		0BFA00262D12000100000026 /* GameButtonBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFA00252D12000100000025 /* GameButtonBody.swift */; };
+		0BFA00302D13000100000030 /* GameProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFA002F2D1300010000002F /* GameProgress.swift */; };
+		0BFA00322D13000100000032 /* Challenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFA00312D13000100000031 /* Challenge.swift */; };
+		0BFA00342D13000100000034 /* ChallengeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFA00332D13000100000033 /* ChallengeStore.swift */; };
+		0BFA00362D13000100000036 /* ChallengeRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFA00352D13000100000035 /* ChallengeRepository.swift */; };
+		0BFA00382D13000100000038 /* ChallengesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFA00372D13000100000037 /* ChallengesView.swift */; };
+		0BFA003A2D1400010000003A /* TVFocusableRowModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFA00392D14000100000039 /* TVFocusableRowModifier.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -92,6 +98,12 @@
 		0BFA00212D12000100000021 /* GameButtonLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameButtonLayout.swift; sourceTree = "<group>"; };
 		0BFA00232D12000100000023 /* GameButtonMetrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameButtonMetrics.swift; sourceTree = "<group>"; };
 		0BFA00252D12000100000025 /* GameButtonBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameButtonBody.swift; sourceTree = "<group>"; };
+		0BFA002F2D1300010000002F /* GameProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameProgress.swift; sourceTree = "<group>"; };
+		0BFA00312D13000100000031 /* Challenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Challenge.swift; sourceTree = "<group>"; };
+		0BFA00332D13000100000033 /* ChallengeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeStore.swift; sourceTree = "<group>"; };
+		0BFA00352D13000100000035 /* ChallengeRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeRepository.swift; sourceTree = "<group>"; };
+		0BFA00372D13000100000037 /* ChallengesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengesView.swift; sourceTree = "<group>"; };
+		0BFA00392D14000100000039 /* TVFocusableRowModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVFocusableRowModifier.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -153,6 +165,7 @@
 			children = (
 				0B737EE32A058331009602AF /* ContentView.swift */,
 				0BFA00182D11000100000018 /* TVContentView.swift */,
+				0BFA00372D13000100000037 /* ChallengesView.swift */,
 				0B86CD342A0A966B0034B82E /* HowToPlayView.swift */,
 				0BFA001D2D1200010000001D /* TVHowToPlayView.swift */,
 				0B86CD3F2A0AB9140034B82E /* Game */,
@@ -196,6 +209,7 @@
 				0BFA001F2D1200010000001F /* GameButtonRole.swift */,
 				0B86CD322A0A957A0034B82E /* HowToPlayButton.swift */,
 				0BFA001B2D1200010000001B /* TVMenuButtonStyle.swift */,
+				0BFA00392D14000100000039 /* TVFocusableRowModifier.swift */,
 			);
 			path = ButtonStyles;
 			sourceTree = "<group>";
@@ -204,6 +218,9 @@
 			isa = PBXGroup;
 			children = (
 				0B737EF32A058706009602AF /* GameModel.swift */,
+				0BFA002F2D1300010000002F /* GameProgress.swift */,
+				0BFA00312D13000100000031 /* Challenge.swift */,
+				0BFA00332D13000100000033 /* ChallengeStore.swift */,
 				0B68339E2A06C28600DB9601 /* Field.swift */,
 				0B737EF52A058773009602AF /* FieldCell.swift */,
 				0B737EF92A058CE1009602AF /* Coordinate.swift */,
@@ -225,6 +242,7 @@
 			isa = PBXGroup;
 			children = (
 				0B86CD2F2A0A8A8B0034B82E /* ScoreRepository.swift */,
+				0BFA00352D13000100000035 /* ChallengeRepository.swift */,
 			);
 			path = Repository;
 			sourceTree = "<group>";
@@ -353,6 +371,12 @@
 				0B737EFA2A058CE1009602AF /* Coordinate.swift in Sources */,
 				0B737F022A068234009602AF /* MoveDirection.swift in Sources */,
 				0B737EF42A058706009602AF /* GameModel.swift in Sources */,
+				0BFA00302D13000100000030 /* GameProgress.swift in Sources */,
+				0BFA00322D13000100000032 /* Challenge.swift in Sources */,
+				0BFA00342D13000100000034 /* ChallengeStore.swift in Sources */,
+				0BFA00362D13000100000036 /* ChallengeRepository.swift in Sources */,
+				0BFA00382D13000100000038 /* ChallengesView.swift in Sources */,
+				0BFA003A2D1400010000003A /* TVFocusableRowModifier.swift in Sources */,
 				0B86CD472A0ABC790034B82E /* String+Extensions.swift in Sources */,
 				0B68339F2A06C28600DB9601 /* Field.swift in Sources */,
 				0B737EF62A058773009602AF /* FieldCell.swift in Sources */,

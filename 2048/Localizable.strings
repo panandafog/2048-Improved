@@ -16,12 +16,54 @@
 "Button.NewGame" = "New Game";
 "Button.StartGame" = "New Game";
 "Button.ContinueGame" = "Continue Game";
+"Button.Challenges" = "Challenges";
 
 "Start" = "Start";
 "Cancel" = "Cancel";
+"Done" = "Done";
 "Score" = "Score";
 "Best" = "Best";
 "BestScore" = "Best Score";
+
+"Challenges.Title" = "Challenge Journey";
+"Challenges.Progress" = "%d of %d completed";
+
+"Challenge.FirstMove.Title" = "The Journey Begins";
+"Challenge.FirstMove.Description" = "Make your first valid move.";
+"Challenge.Score100.Title" = "Three Digits";
+"Challenge.Score100.Description" = "Score 100 points in one game.";
+"Challenge.Tile64.Title" = "Building Momentum";
+"Challenge.Tile64.Description" = "Create a 64 tile.";
+"Challenge.Tile64Quick.Title" = "Fast Start";
+"Challenge.Tile64Quick.Description" = "Create a 64 tile within 35 moves.";
+"Challenge.Score500.Title" = "High Five Hundred";
+"Challenge.Score500.Description" = "Score 500 points in one game.";
+"Challenge.Tile128.Title" = "Power of Seven";
+"Challenge.Tile128.Description" = "Create a 128 tile.";
+"Challenge.Tile128Quick.Title" = "Rapid Growth";
+"Challenge.Tile128Quick.Description" = "Create a 128 tile within 70 moves.";
+"Challenge.Score2000.Title" = "Two Thousand Club";
+"Challenge.Score2000.Description" = "Score 2,000 points in one game.";
+"Challenge.Tile256.Title" = "Quartermaster";
+"Challenge.Tile256.Description" = "Create a 256 tile.";
+"Challenge.Tile256Quick.Title" = "Precision Builder";
+"Challenge.Tile256Quick.Description" = "Create a 256 tile within 140 moves.";
+"Challenge.Tile512.Title" = "Halfway Hero";
+"Challenge.Tile512.Description" = "Create a 512 tile.";
+"Challenge.Score5000.Title" = "Serious Scorer";
+"Challenge.Score5000.Description" = "Score 5,000 points in one game.";
+"Challenge.Moves500.Title" = "Endurance Run";
+"Challenge.Moves500.Description" = "Survive for 500 valid moves in one game.";
+"Challenge.Tile1024.Title" = "Almost There";
+"Challenge.Tile1024.Description" = "Create a 1,024 tile.";
+"Challenge.Score10000.Title" = "Five Figures";
+"Challenge.Score10000.Description" = "Score 10,000 points in one game.";
+"Challenge.Tile2048.Title" = "Journey Complete";
+"Challenge.Tile2048.Description" = "Create the legendary 2,048 tile.";
+
+"Alert.ChallengeComplete.Title" = "Challenge Complete!";
+"Alert.ChallengeComplete.Message" = "You completed \"%@\".";
+"Alert.ChallengeComplete.Button" = "Great!";
 
 "HowToPlay.macOS" = "
 Use swipe or arrow keys to move the tiles.

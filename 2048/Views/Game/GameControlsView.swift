@@ -11,12 +11,20 @@ struct GameControlsView: View {
     // MARK: - Input
     
     @Binding var showHowToPlay: Bool
+    let onShowChallenges: () -> Void
     let onNewGame: () -> Void
     
     // MARK: - Body
     
     var body: some View {
         HStack {
+            Button(action: onShowChallenges) {
+                Image(systemName: "trophy")
+                    .accessibilityLabel("Button.Challenges".localized)
+            }
+            .buttonStyle(HowToPlayButton())
+            .help("Button.Challenges".localized)
+
             Button("Button.HowToPlay".localized, action: toggleHowToPlay)
                 .buttonStyle(HowToPlayButton())
             
@@ -42,6 +50,7 @@ struct GameControlsView_Previews: PreviewProvider {
     static var previews: some View {
         GameControlsView(
             showHowToPlay: .init(get: { false }, set: { _ in }),
+            onShowChallenges: {},
             onNewGame: {}
         )
     }

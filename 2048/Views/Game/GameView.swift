@@ -14,6 +14,7 @@ struct GameView: View {
     @StateObject private var inputController = GameInputController()
     @Binding var showHowToPlay: Bool
     private let showsBottomControls: Bool
+    private let onShowChallenges: () -> Void
 #if os(tvOS)
     private let onExitCommand: (() -> Void)?
 #endif
@@ -28,6 +29,11 @@ struct GameView: View {
     private static let maxFieldSize: CGFloat = 760
     private static let minFieldSize: CGFloat = 420
     private static let defaultShowsBottomControls = false
+#elseif os(macOS)
+    private static let verticalSpacing: CGFloat = 10
+    private static let maxFieldSize: CGFloat = 500
+    private static let minFieldSize: CGFloat = 400
+    private static let defaultShowsBottomControls = true
 #else
     private static let verticalSpacing: CGFloat = 10
     private static let maxFieldSize: CGFloat = 500
@@ -53,11 +59,13 @@ struct GameView: View {
         showHowToPlay: Binding<Bool>,
         game: GameModel = GameModel(),
         showsBottomControls: Bool = Self.defaultShowsBottomControls,
+        onShowChallenges: @escaping () -> Void = {},
         onExitCommand: (() -> Void)? = nil
     ) {
         _showHowToPlay = showHowToPlay
         _game = StateObject(wrappedValue: game)
         self.showsBottomControls = showsBottomControls
+        self.onShowChallenges = onShowChallenges
 #if os(tvOS)
         self.onExitCommand = onExitCommand
 #endif
@@ -90,6 +98,7 @@ struct GameView: View {
                 if showsBottomControls {
                     GameControlsView(
                         showHowToPlay: $showHowToPlay,
+                        onShowChallenges: onShowChallenges,
                         onNewGame: handleNewGameRequest
                     )
                     .frame(

@@ -6,12 +6,22 @@
 //
 
 import SwiftUI
-import CoreData
 
 struct ContentView: View {
     // MARK: - State
-    
-    @State var showHowToPlay = false
+
+    @StateObject private var game: GameModel
+    @StateObject private var challenges: ChallengeStore
+    @State private var showHowToPlay = false
+    @State private var showChallenges = false
+
+    // MARK: - Lifecycle
+
+    init() {
+        let game = GameModel()
+        _game = StateObject(wrappedValue: game)
+        _challenges = StateObject(wrappedValue: ChallengeStore(game: game))
+    }
     
     // MARK: - Body
     
@@ -20,7 +30,11 @@ struct ContentView: View {
             Spacer()
             VStack {
                 Spacer()
-                GameView(showHowToPlay: $showHowToPlay)
+                GameView(
+                    showHowToPlay: $showHowToPlay,
+                    game: game,
+                    onShowChallenges: { showChallenges = true }
+                )
                 if showHowToPlay {
                     Divider()
                     HowToPlayView()
@@ -30,6 +44,10 @@ struct ContentView: View {
             Spacer()
         }
         .background(Color.gameForeground)
+        .sheet(isPresented: $showChallenges) {
+            ChallengesView(store: challenges)
+        }
+        .challengeCompletionAlert(store: challenges)
     }
 }
 

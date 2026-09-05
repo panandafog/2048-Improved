@@ -18,6 +18,7 @@ class GameModel: ObservableObject {
     @Published var lose = false
     @Published private(set) var hasStarted = false
     @Published private(set) var hasMadeMove = false
+    @Published private(set) var progress = GameProgress.empty
     
     // MARK: - Score Persistence
     
@@ -41,6 +42,7 @@ class GameModel: ObservableObject {
     // MARK: - Private Properties
     
     private(set) var fieldSize: Int
+    private var moveCount = 0
     
     private let calculationsQueue = DispatchQueue(
         label: "game.concurrent.queue",
@@ -75,15 +77,21 @@ class GameModel: ObservableObject {
         calculationsQueue.async { [self] in
             do {
                 let moveScore = try field.move(direction)
+                let highestTile = field.cells.map(\.value).max() ?? 0
                 DispatchQueue.main.async { [self] in
                     hasMadeMove = true
                     score += moveScore
                     bestScore = max(score, bestScore)
+                    moveCount += 1
+                    publishProgress(highestTile: highestTile)
                     if !field.canMove { lose = true }
                 }
             } catch GameError.win {
+                let highestTile = field.cells.map(\.value).max() ?? field.winValue
                 DispatchQueue.main.async { [self] in
                     hasMadeMove = true
+                    moveCount += 1
+                    publishProgress(highestTile: highestTile)
                     victory = true
                 }
             } catch GameError.cantMove {
@@ -110,6 +118,8 @@ class GameModel: ObservableObject {
         field.reset()
         hasStarted = false
         hasMadeMove = false
+        moveCount = 0
+        progress = .empty
         
         try start()
         objectWillChange.send()
@@ -117,5 +127,13 @@ class GameModel: ObservableObject {
     
     func cancelNewGame() {
         newGameRequested = false
+    }
+
+    private func publishProgress(highestTile: Int) {
+        progress = GameProgress(
+            score: score,
+            moveCount: moveCount,
+            highestTile: highestTile
+        )
     }
 }
