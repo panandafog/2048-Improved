@@ -26,7 +26,7 @@ struct ChallengesView: View {
 #if os(tvOS)
                 .frame(maxWidth: ChallengesLayout.contentMaxWidth)
                 .padding(.horizontal, ChallengesLayout.headerHorizontalPadding)
-#elseif os(iOS)
+#elseif os(iOS) || os(macOS)
                 .frame(maxWidth: ChallengesLayout.contentMaxWidth)
                 .padding(.horizontal, ChallengesLayout.horizontalContentPadding)
 #endif
@@ -45,7 +45,7 @@ struct ChallengesView: View {
                 .padding(.horizontal, ChallengesLayout.scrollContentHorizontalPadding)
                 .padding(.vertical, ChallengesLayout.scrollContentVerticalPadding)
                 .frame(maxWidth: .infinity)
-#elseif os(iOS)
+#elseif os(iOS) || os(macOS)
                 .frame(maxWidth: ChallengesLayout.contentMaxWidth)
                 .padding(.horizontal, ChallengesLayout.horizontalContentPadding)
                 .padding(.bottom, ChallengesLayout.scrollContentBottomPadding)
@@ -54,7 +54,7 @@ struct ChallengesView: View {
             }
 #if os(tvOS)
             .ignoresSafeArea(edges: [.horizontal, .bottom])
-#elseif os(iOS)
+#elseif os(iOS) || os(macOS)
             .ignoresSafeArea(edges: [.horizontal, .bottom])
 #endif
         }
@@ -62,7 +62,7 @@ struct ChallengesView: View {
         .padding(.top, ChallengesLayout.topContentPadding)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onExitCommand(perform: onExitCommand)
-#elseif os(iOS)
+#elseif os(iOS) || os(macOS)
         .padding(.top, ChallengesLayout.verticalContentPadding)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .frame(minWidth: ChallengesLayout.minimumWidth, minHeight: ChallengesLayout.minimumHeight)
@@ -207,33 +207,6 @@ private enum ChallengesLayout {
     static let rowDescriptionFont = Font.subheadline
     static let columns = [GridItem(.flexible())]
 #endif
-}
-
-private struct ChallengeCompletionAlertModifier: ViewModifier {
-    @ObservedObject var store: ChallengeStore
-
-    func body(content: Content) -> some View {
-        content.alert(item: $store.presentedCompletion) { challenge in
-            Alert(
-                title: Text("Alert.ChallengeComplete.Title".localized),
-                message: Text(
-                    String(
-                        format: "Alert.ChallengeComplete.Message".localized,
-                        challenge.title
-                    )
-                ),
-                dismissButton: .default(Text("Alert.ChallengeComplete.Button".localized)) {
-                    store.dismissPresentedCompletion()
-                }
-            )
-        }
-    }
-}
-
-extension View {
-    func challengeCompletionAlert(store: ChallengeStore) -> some View {
-        modifier(ChallengeCompletionAlertModifier(store: store))
-    }
 }
 
 struct ChallengesView_Previews: PreviewProvider {

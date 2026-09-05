@@ -27,6 +27,7 @@
 
 "Challenges.Title" = "Challenge Journey";
 "Challenges.Progress" = "%d of %d completed";
+"Toast.AchievementUnlocked" = "Achievement Unlocked";
 
 "Challenge.FirstMove.Title" = "The Journey Begins";
 "Challenge.FirstMove.Description" = "Make your first valid move.";
@@ -60,10 +61,6 @@
 "Challenge.Score10000.Description" = "Score 10,000 points in one game.";
 "Challenge.Tile2048.Title" = "Journey Complete";
 "Challenge.Tile2048.Description" = "Create the legendary 2,048 tile.";
-
-"Alert.ChallengeComplete.Title" = "Challenge Complete!";
-"Alert.ChallengeComplete.Message" = "You completed \"%@\".";
-"Alert.ChallengeComplete.Button" = "Great!";
 
 "HowToPlay.macOS" = "
 Use swipe or arrow keys to move the tiles.

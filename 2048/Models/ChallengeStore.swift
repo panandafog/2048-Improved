@@ -10,21 +10,29 @@ final class ChallengeStore: ObservableObject {
     let challenges: [Challenge]
 
     @Published private(set) var completedChallengeIDs: Set<String>
-    @Published var presentedCompletion: Challenge?
+    @Published private(set) var presentedAchievement: Challenge?
 
-    private weak var game: GameModel?
-    private var pendingCompletions: [Challenge] = []
+    private let achievementReporter: AchievementReporting
+    private var pendingAchievements: [Challenge] = []
     private var progressObservation: AnyCancellable?
-    private var gameAlertObservation: AnyCancellable?
+    private var toastDismissalWorkItem: DispatchWorkItem?
 
     var completedCount: Int {
         challenges.filter(isCompleted).count
     }
 
-    init(game: GameModel, challenges: [Challenge] = ChallengeCatalog.all) {
-        self.game = game
+    init(
+        game: GameModel,
+        challenges: [Challenge] = ChallengeCatalog.all,
+        achievementReporter: AchievementReporting = GameCenterService.shared
+    ) {
         self.challenges = challenges
+        self.achievementReporter = achievementReporter
         completedChallengeIDs = ChallengeRepository.completedChallengeIDs
+        achievementReporter.submit(
+            completedAchievementIDs: completedChallengeIDs,
+            showsCompletionBanner: false
+        )
 
         progressObservation = game.$progress
             .dropFirst()
@@ -32,33 +40,14 @@ final class ChallengeStore: ObservableObject {
             .sink { [weak self] progress in
                 self?.evaluate(progress)
             }
-
-        gameAlertObservation = Publishers.CombineLatest3(
-            game.$victory,
-            game.$lose,
-            game.$newGameRequested
-        )
-        .receive(on: DispatchQueue.main)
-        .sink { [weak self] alertState in
-            guard !alertState.0, !alertState.1, !alertState.2 else {
-                return
-            }
-
-            DispatchQueue.main.async {
-                self?.presentNextCompletion()
-            }
-        }
     }
 
     func isCompleted(_ challenge: Challenge) -> Bool {
         completedChallengeIDs.contains(challenge.id)
     }
 
-    func dismissPresentedCompletion() {
-        presentedCompletion = nil
-        DispatchQueue.main.async { [weak self] in
-            self?.presentNextCompletion()
-        }
+    deinit {
+        toastDismissalWorkItem?.cancel()
     }
 }
 
@@ -74,23 +63,45 @@ private extension ChallengeStore {
 
         newlyCompleted.forEach { completedChallengeIDs.insert($0.id) }
         ChallengeRepository.completedChallengeIDs = completedChallengeIDs
-        pendingCompletions.append(contentsOf: newlyCompleted)
-        presentNextCompletion()
+        achievementReporter.submit(
+            completedAchievementIDs: Set(newlyCompleted.map(\.id)),
+            showsCompletionBanner: true
+        )
+        pendingAchievements.append(contentsOf: newlyCompleted)
+        presentNextAchievement()
     }
 
-    func presentNextCompletion() {
-        let isGameAlertPresented = game.map {
-            $0.victory || $0.lose || $0.newGameRequested
-        } ?? false
-
-        guard
-            !isGameAlertPresented,
-            presentedCompletion == nil,
-            !pendingCompletions.isEmpty
-        else {
+    func presentNextAchievement() {
+        guard presentedAchievement == nil, !pendingAchievements.isEmpty else {
             return
         }
 
-        presentedCompletion = pendingCompletions.removeFirst()
+        presentedAchievement = pendingAchievements.removeFirst()
+
+        let workItem = DispatchWorkItem { [weak self] in
+            self?.dismissPresentedAchievement()
+        }
+        toastDismissalWorkItem = workItem
+        DispatchQueue.main.asyncAfter(
+            deadline: .now() + AchievementToastTiming.displayDuration,
+            execute: workItem
+        )
     }
+
+    func dismissPresentedAchievement() {
+        toastDismissalWorkItem?.cancel()
+        toastDismissalWorkItem = nil
+        presentedAchievement = nil
+
+        DispatchQueue.main.asyncAfter(
+            deadline: .now() + AchievementToastTiming.transitionDuration
+        ) { [weak self] in
+            self?.presentNextAchievement()
+        }
+    }
+}
+
+enum AchievementToastTiming {
+    static let displayDuration: TimeInterval = 3
+    static let transitionDuration: TimeInterval = 0.25
 }

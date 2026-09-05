@@ -13,8 +13,10 @@ struct _2048App: App {
         WindowGroup {
 #if os(tvOS)
             TVContentView()
+                .onAppear(perform: GameCenterService.shared.authenticate)
 #else
             ContentView()
+                .onAppear(perform: GameCenterService.shared.authenticate)
 #endif
         }
         #if os(macOS)

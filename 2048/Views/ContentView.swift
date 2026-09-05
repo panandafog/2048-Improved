@@ -47,7 +47,7 @@ struct ContentView: View {
         .sheet(isPresented: $showChallenges) {
             ChallengesView(store: challenges)
         }
-        .challengeCompletionAlert(store: challenges)
+        .achievementToast(store: challenges)
     }
 }
 

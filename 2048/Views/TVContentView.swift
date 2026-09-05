@@ -46,7 +46,7 @@ struct TVContentView: View {
                 menu
             }
         }
-        .challengeCompletionAlert(store: challenges)
+        .achievementToast(store: challenges)
     }
 }
 
