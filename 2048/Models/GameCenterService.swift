@@ -26,8 +26,12 @@ final class GameCenterService: AchievementReporting {
     private var isReporting = false
 
     private init() {
+        let activeAchievementIDs = Set(ChallengeCatalog.all.map(\.id))
+        let pendingAchievementIDs = ChallengeRepository.pendingGameCenterBannerIDs
+            .intersection(activeAchievementIDs)
+        ChallengeRepository.pendingGameCenterBannerIDs = pendingAchievementIDs
         pendingAchievements = Dictionary(
-            uniqueKeysWithValues: ChallengeRepository.pendingGameCenterBannerIDs.map {
+            uniqueKeysWithValues: pendingAchievementIDs.map {
                 ($0, true)
             }
         )

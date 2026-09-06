@@ -53,24 +53,12 @@
 "Challenges.Progress" = "%d of %d completed";
 "Toast.AchievementUnlocked" = "Achievement Unlocked";
 
-"Challenge.FirstMove.Title" = "The Journey Begins";
-"Challenge.FirstMove.Description" = "Make your first valid move.";
-"Challenge.Score100.Title" = "Three Digits";
-"Challenge.Score100.Description" = "Score 100 points in one game.";
-"Challenge.Tile64.Title" = "Building Momentum";
-"Challenge.Tile64.Description" = "Create a 64 tile.";
 "Challenge.Tile64Quick.Title" = "Fast Start";
 "Challenge.Tile64Quick.Description" = "Create a 64 tile within 35 moves.";
 "Challenge.Score500.Title" = "High Five Hundred";
 "Challenge.Score500.Description" = "Score 500 points in one game.";
-"Challenge.Tile128.Title" = "Power of Seven";
-"Challenge.Tile128.Description" = "Create a 128 tile.";
 "Challenge.Tile128Quick.Title" = "Rapid Growth";
 "Challenge.Tile128Quick.Description" = "Create a 128 tile within 70 moves.";
-"Challenge.Score2000.Title" = "Two Thousand Club";
-"Challenge.Score2000.Description" = "Score 2,000 points in one game.";
-"Challenge.Tile256.Title" = "Quartermaster";
-"Challenge.Tile256.Description" = "Create a 256 tile.";
 "Challenge.Tile256Quick.Title" = "Precision Builder";
 "Challenge.Tile256Quick.Description" = "Create a 256 tile within 140 moves.";
 "Challenge.Tile512.Title" = "Halfway Hero";

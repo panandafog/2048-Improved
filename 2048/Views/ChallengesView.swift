@@ -133,7 +133,7 @@ private struct ChallengeRow: View {
         HStack(spacing: ChallengesLayout.rowSpacing) {
             Image(systemName: isCompleted ? "checkmark.circle.fill" : "circle")
                 .font(.system(size: ChallengesLayout.statusIconSize, weight: .semibold))
-                .foregroundColor(isCompleted ? .accentColor : .labelLight2)
+                .foregroundColor(isCompleted ? .labelLight : .labelLight2)
                 .frame(width: ChallengesLayout.statusIconFrame)
 
             VStack(alignment: .leading, spacing: ChallengesLayout.textSpacing) {

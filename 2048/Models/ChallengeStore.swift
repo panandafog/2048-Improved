@@ -28,7 +28,10 @@ final class ChallengeStore: ObservableObject {
     ) {
         self.challenges = challenges
         self.achievementReporter = achievementReporter
+        let activeChallengeIDs = Set(challenges.map(\.id))
         completedChallengeIDs = ChallengeRepository.completedChallengeIDs
+            .intersection(activeChallengeIDs)
+        ChallengeRepository.completedChallengeIDs = completedChallengeIDs
         achievementReporter.submit(
             completedAchievementIDs: completedChallengeIDs,
             showsCompletionBanner: false

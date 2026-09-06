@@ -28,18 +28,21 @@ struct GameView: View {
     
 #if os(tvOS)
     private static let verticalSpacing: CGFloat = 50
+    private static let anomalyStatusTopPadding: CGFloat = 30
     private static let maxFieldSize: CGFloat = 760
     private static let classicMinFieldSize: CGFloat = 420
     private static let anomalyMinFieldSize: CGFloat = 420
     private static let defaultShowsBottomControls = false
 #elseif os(macOS)
     private static let verticalSpacing: CGFloat = 10
+    private static let anomalyStatusTopPadding: CGFloat = 0
     private static let maxFieldSize: CGFloat = 500
     private static let classicMinFieldSize: CGFloat = 320
     private static let anomalyMinFieldSize: CGFloat = 400
     private static let defaultShowsBottomControls = true
 #else
     private static let verticalSpacing: CGFloat = 10
+    private static let anomalyStatusTopPadding: CGFloat = 0
     private static let maxFieldSize: CGFloat = 500
     private static let classicMinFieldSize: CGFloat = 300
     private static let anomalyMinFieldSize: CGFloat = 300
@@ -63,7 +66,14 @@ struct GameView: View {
     
     private var notFieldHeight: CGFloat {
         let statusHeight = game.mode == .anomaly ? Self.anomalyStatusHeight : 0
-        return Self.scoreStackHeight + statusHeight + Self.verticalSpacing * verticalSpacingCount + bottomControlsHeight
+        let statusTopPadding = game.mode == .anomaly
+            ? Self.anomalyStatusTopPadding
+            : 0
+        return Self.scoreStackHeight
+            + statusHeight
+            + statusTopPadding
+            + Self.verticalSpacing * verticalSpacingCount
+            + bottomControlsHeight
     }
     
     // MARK: - Lifecycle
@@ -108,6 +118,7 @@ struct GameView: View {
                 if game.mode == .anomaly {
                     AnomalyStatusView(game: game)
                         .frame(width: fieldSize, height: Self.anomalyStatusHeight)
+                        .padding(.top, Self.anomalyStatusTopPadding)
                 }
                 
                 FieldView(game: game)

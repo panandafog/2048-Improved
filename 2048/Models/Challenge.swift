@@ -44,24 +44,6 @@ enum ChallengeCondition: Equatable {
 enum ChallengeCatalog {
     static let all: [Challenge] = [
         Challenge(
-            id: "challenge.first_move",
-            titleKey: "Challenge.FirstMove.Title",
-            descriptionKey: "Challenge.FirstMove.Description",
-            condition: .moveCount(1)
-        ),
-        Challenge(
-            id: "challenge.score_100",
-            titleKey: "Challenge.Score100.Title",
-            descriptionKey: "Challenge.Score100.Description",
-            condition: .score(100)
-        ),
-        Challenge(
-            id: "challenge.tile_64",
-            titleKey: "Challenge.Tile64.Title",
-            descriptionKey: "Challenge.Tile64.Description",
-            condition: .highestTile(64)
-        ),
-        Challenge(
             id: "challenge.tile_64_in_35_moves",
             titleKey: "Challenge.Tile64Quick.Title",
             descriptionKey: "Challenge.Tile64Quick.Description",
@@ -74,28 +56,10 @@ enum ChallengeCatalog {
             condition: .score(500)
         ),
         Challenge(
-            id: "challenge.tile_128",
-            titleKey: "Challenge.Tile128.Title",
-            descriptionKey: "Challenge.Tile128.Description",
-            condition: .highestTile(128)
-        ),
-        Challenge(
             id: "challenge.tile_128_in_70_moves",
             titleKey: "Challenge.Tile128Quick.Title",
             descriptionKey: "Challenge.Tile128Quick.Description",
             condition: .highestTileWithinMoves(tile: 128, moves: 70)
-        ),
-        Challenge(
-            id: "challenge.score_2000",
-            titleKey: "Challenge.Score2000.Title",
-            descriptionKey: "Challenge.Score2000.Description",
-            condition: .score(2_000)
-        ),
-        Challenge(
-            id: "challenge.tile_256",
-            titleKey: "Challenge.Tile256.Title",
-            descriptionKey: "Challenge.Tile256.Description",
-            condition: .highestTile(256)
         ),
         Challenge(
             id: "challenge.tile_256_in_140_moves",
