@@ -5,7 +5,7 @@
 
 import Foundation
 
-enum GameMode: String, CaseIterable, Identifiable {
+enum GameMode: String, CaseIterable, Hashable, Identifiable {
     case classic
     case anomaly
 
@@ -32,7 +32,7 @@ enum GameMode: String, CaseIterable, Identifiable {
     }
 }
 
-enum BoardSize: Int, CaseIterable, Identifiable {
+enum BoardSize: Int, CaseIterable, Hashable, Identifiable {
     case standard = 4
     case large = 5
     case extraLarge = 6
@@ -50,7 +50,7 @@ enum BoardSize: Int, CaseIterable, Identifiable {
     }
 }
 
-struct GameConfiguration: Equatable {
+struct GameConfiguration: Hashable {
     let mode: GameMode
     let boardSize: BoardSize
 

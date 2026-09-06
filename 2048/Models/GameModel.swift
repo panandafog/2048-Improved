@@ -20,7 +20,7 @@ class GameModel: ObservableObject {
     @Published var lose = false
     @Published private(set) var hasStarted = false
     @Published private(set) var hasMadeMove = false
-    @Published private(set) var progress = GameProgress.empty
+    @Published private(set) var progress: GameProgress
     
     // MARK: - Score Persistence
     
@@ -85,6 +85,7 @@ class GameModel: ObservableObject {
             mode: mode
         )
         bestScore = ScoreRepository.bestScore(for: configuration)
+        progress = .empty(configuration: configuration)
     }
     
     // MARK: - Game Flow
@@ -153,7 +154,7 @@ class GameModel: ObservableObject {
         hasStarted = false
         hasMadeMove = false
         moveCount = 0
-        progress = .empty
+        progress = .empty(configuration: targetConfiguration)
         
         try start()
         objectWillChange.send()
@@ -161,6 +162,7 @@ class GameModel: ObservableObject {
     
     private func publishProgress(highestTile: Int) {
         progress = GameProgress(
+            configuration: configuration,
             score: score,
             moveCount: moveCount,
             highestTile: highestTile

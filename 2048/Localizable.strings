@@ -54,25 +54,25 @@
 "Toast.AchievementUnlocked" = "Achievement Unlocked";
 
 "Challenge.Tile64Quick.Title" = "Fast Start";
-"Challenge.Tile64Quick.Description" = "Create a 64 tile within 35 moves.";
+"Challenge.Tile64Quick.Description" = "Create a 64 tile within 35 moves in a Classic 4x4 game";
 "Challenge.Score500.Title" = "High Five Hundred";
-"Challenge.Score500.Description" = "Score 500 points in one game.";
+"Challenge.Score500.Description" = "Score 500 points in a Classic 4x4 game";
 "Challenge.Tile128Quick.Title" = "Rapid Growth";
-"Challenge.Tile128Quick.Description" = "Create a 128 tile within 70 moves.";
+"Challenge.Tile128Quick.Description" = "Create a 128 tile within 70 moves in a Classic 4x4 game";
 "Challenge.Tile256Quick.Title" = "Precision Builder";
-"Challenge.Tile256Quick.Description" = "Create a 256 tile within 140 moves.";
+"Challenge.Tile256Quick.Description" = "Create a 256 tile within 140 moves in a Classic 4x4 game";
 "Challenge.Tile512.Title" = "Halfway Hero";
-"Challenge.Tile512.Description" = "Create a 512 tile.";
+"Challenge.Tile512.Description" = "Create a 512 tile in a Classic 4x4 game";
 "Challenge.Score5000.Title" = "Serious Scorer";
-"Challenge.Score5000.Description" = "Score 5,000 points in one game.";
+"Challenge.Score5000.Description" = "Score 5,000 points in a Classic 4x4 game";
 "Challenge.Moves500.Title" = "Endurance Run";
-"Challenge.Moves500.Description" = "Survive for 500 valid moves in one game.";
+"Challenge.Moves500.Description" = "Make 500 valid moves in a Classic 4x4 game";
 "Challenge.Tile1024.Title" = "Almost There";
-"Challenge.Tile1024.Description" = "Create a 1,024 tile.";
+"Challenge.Tile1024.Description" = "Create a 1,024 tile in a Classic 4x4 game";
 "Challenge.Score10000.Title" = "Five Figures";
-"Challenge.Score10000.Description" = "Score 10,000 points in one game.";
+"Challenge.Score10000.Description" = "Score 10,000 points in a Classic 4x4 game";
 "Challenge.Tile2048.Title" = "Journey Complete";
-"Challenge.Tile2048.Description" = "Create the legendary 2,048 tile.";
+"Challenge.Tile2048.Description" = "Create the legendary 2,048 tile in a Classic 4x4 game";
 
 "HowToPlay.Overview.iOS" = "Swipe in any direction to slide every tile. Equal numbers merge and add to your score. Build a 2,048 tile to win.";
 "HowToPlay.Overview.macOS" = "Swipe or use the arrow keys to slide every tile. Equal numbers merge and add to your score. Build a 2,048 tile to win.";

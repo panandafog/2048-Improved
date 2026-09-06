@@ -57,7 +57,7 @@ final class ChallengeStore: ObservableObject {
 private extension ChallengeStore {
     func evaluate(_ progress: GameProgress) {
         let newlyCompleted = challenges.filter {
-            !completedChallengeIDs.contains($0.id) && $0.condition.isSatisfied(by: progress)
+            !completedChallengeIDs.contains($0.id) && $0.isSatisfied(by: progress)
         }
 
         guard !newlyCompleted.isEmpty else {
