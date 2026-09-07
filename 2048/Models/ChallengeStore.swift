@@ -28,14 +28,18 @@ final class ChallengeStore: ObservableObject {
     ) {
         self.challenges = challenges
         self.achievementReporter = achievementReporter
-        let activeChallengeIDs = Set(challenges.map(\.id))
-        completedChallengeIDs = ChallengeRepository.completedChallengeIDs
-            .intersection(activeChallengeIDs)
-        ChallengeRepository.completedChallengeIDs = completedChallengeIDs
-        achievementReporter.submit(
-            completedAchievementIDs: completedChallengeIDs,
-            showsCompletionBanner: false
-        )
+        if ScreenshotDemoMode.isEnabled {
+            completedChallengeIDs = Set(challenges.prefix(3).map(\.id))
+        } else {
+            let activeChallengeIDs = Set(challenges.map(\.id))
+            completedChallengeIDs = ChallengeRepository.completedChallengeIDs
+                .intersection(activeChallengeIDs)
+            ChallengeRepository.completedChallengeIDs = completedChallengeIDs
+            achievementReporter.submit(
+                completedAchievementIDs: completedChallengeIDs,
+                showsCompletionBanner: false
+            )
+        }
 
         progressObservation = game.$progress
             .dropFirst()
@@ -56,6 +60,10 @@ final class ChallengeStore: ObservableObject {
 
 private extension ChallengeStore {
     func evaluate(_ progress: GameProgress) {
+        guard !ScreenshotDemoMode.isEnabled else {
+            return
+        }
+
         let newlyCompleted = challenges.filter {
             !completedChallengeIDs.contains($0.id) && $0.isSatisfied(by: progress)
         }

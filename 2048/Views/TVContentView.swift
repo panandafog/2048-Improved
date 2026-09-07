@@ -26,6 +26,7 @@ struct TVContentView: View {
         let game = GameModel()
         _game = StateObject(wrappedValue: game)
         _challenges = StateObject(wrappedValue: ChallengeStore(game: game))
+        _screen = State(initialValue: Self.initialScreen)
     }
     
     // MARK: - Body
@@ -57,7 +58,7 @@ private extension TVContentView {
     
     var menu: some View {
         VStack(spacing: Self.menuSpacing) {
-            TitleView()
+            TitleView(title: "App.Name".localized)
                 .scaleEffect(TVMenuLayout.titleScale)
                 .padding(.bottom, Self.titleBottomPadding)
             
@@ -115,6 +116,7 @@ private extension TVContentView {
     var howToPlayScreen: some View {
         TVHowToPlayView(
             initialMode: game.mode,
+            initialPage: ScreenshotDemoMode.scene == .masterEveryAnomaly ? 1 : 0,
             onExitCommand: returnToMenu
         )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -131,6 +133,21 @@ private extension TVContentView {
             onSelect: startNewGame,
             onCancel: returnToMenu
         )
+    }
+}
+
+private extension TVContentView {
+    static var initialScreen: TVScreen {
+        switch ScreenshotDemoMode.scene {
+        case .challengeJourney:
+            return .challenges
+        case .masterEveryAnomaly:
+            return .howToPlay
+        case .some:
+            return .game
+        case .none:
+            return ScreenshotDemoMode.isEnabled ? .game : .menu
+        }
     }
 }
 

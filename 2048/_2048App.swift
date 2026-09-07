@@ -11,13 +11,21 @@ import SwiftUI
 struct _2048App: App {
     var body: some Scene {
         WindowGroup {
+            Group {
 #if os(tvOS)
-            TVContentView()
-                .onAppear(perform: GameCenterService.shared.authenticate)
+                TVContentView()
 #else
-            ContentView()
-                .onAppear(perform: GameCenterService.shared.authenticate)
+                ContentView()
 #endif
+            }
+            .preferredColorScheme(ScreenshotDemoMode.isEnabled ? .light : nil)
+            .onAppear {
+                guard !ScreenshotDemoMode.isEnabled else {
+                    return
+                }
+
+                GameCenterService.shared.authenticate()
+            }
         }
         #if os(macOS)
         .windowStyle(.hiddenTitleBar)

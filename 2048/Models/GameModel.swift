@@ -8,6 +8,71 @@
 import Combine
 import SwiftUI
 
+enum ScreenshotScene: String {
+    case anomalyGameplay = "anomaly-gameplay"
+    case classicGameplay = "classic-gameplay"
+    case classicBigField = "classic-big-field"
+    case challengeJourney = "challenge-journey"
+    case masterEveryAnomaly = "master-every-anomaly"
+}
+
+enum ScreenshotDemoMode {
+#if DEBUG
+    static let isEnabledInCode = false
+    static var scene: ScreenshotScene? {
+        let prefix = "--screenshot-scene="
+        guard let argument = ProcessInfo.processInfo.arguments.first(where: {
+            $0.hasPrefix(prefix)
+        }) else {
+            return nil
+        }
+
+        return ScreenshotScene(rawValue: String(argument.dropFirst(prefix.count)))
+    }
+
+    static var isEnabled: Bool {
+        isEnabledInCode
+            || scene != nil
+            || ProcessInfo.processInfo.arguments.contains("--screenshot-demo")
+    }
+#else
+    static let scene: ScreenshotScene? = nil
+    static let isEnabled = false
+#endif
+
+    static var activeScene: ScreenshotScene {
+        scene ?? .anomalyGameplay
+    }
+
+    static var configuration: GameConfiguration {
+        switch activeScene {
+        case .anomalyGameplay, .masterEveryAnomaly:
+            return GameConfiguration(mode: .anomaly, boardSize: .large)
+        case .classicGameplay, .challengeJourney:
+            return GameConfiguration(mode: .classic, boardSize: .standard)
+        case .classicBigField:
+            return GameConfiguration(mode: .classic, boardSize: .large)
+        }
+    }
+
+    static var score: Int {
+        switch activeScene {
+        case .anomalyGameplay, .masterEveryAnomaly:
+            return 4_896
+        case .classicGameplay, .challengeJourney:
+            return 3_680
+        case .classicBigField:
+            return 8_292
+        }
+    }
+
+    static let bestScore = 12_672
+    static var moveCount: Int {
+        activeScene == .anomalyGameplay ? 17 : 96
+    }
+    static let nextAnomalyKind = AnomalyKind.bomb
+}
+
 class GameModel: ObservableObject {
     // MARK: - State
     
@@ -76,16 +141,42 @@ class GameModel: ObservableObject {
         winValue: Int = 2048,
         mode: GameMode = .classic
     ) {
-        self.mode = mode
-        self.boardSize = boardSize
-        let configuration = GameConfiguration(mode: mode, boardSize: boardSize)
+        let configuration = ScreenshotDemoMode.isEnabled
+            ? ScreenshotDemoMode.configuration
+            : GameConfiguration(mode: mode, boardSize: boardSize)
+
+        self.mode = configuration.mode
+        self.boardSize = configuration.boardSize
         field = Field(
-            fieldSize: boardSize.rawValue,
+            fieldSize: configuration.boardSize.rawValue,
             winValue: winValue,
-            mode: mode
+            mode: configuration.mode
         )
-        bestScore = ScoreRepository.bestScore(for: configuration)
+        bestScore = ScreenshotDemoMode.isEnabled
+            ? ScreenshotDemoMode.bestScore
+            : ScoreRepository.bestScore(for: configuration)
         progress = .empty(configuration: configuration)
+
+        if ScreenshotDemoMode.isEnabled {
+            let cells = SampleBoard.cells(
+                fieldSize: configuration.boardSize.rawValue,
+                mode: configuration.mode
+            )
+            field.loadSample(
+                cells,
+                nextAnomalyKind: ScreenshotDemoMode.nextAnomalyKind
+            )
+            score = ScreenshotDemoMode.score
+            moveCount = ScreenshotDemoMode.moveCount
+            hasStarted = true
+            hasMadeMove = true
+            progress = GameProgress(
+                configuration: configuration,
+                score: score,
+                moveCount: moveCount,
+                highestTile: field.highestTile
+            )
+        }
     }
     
     // MARK: - Game Flow

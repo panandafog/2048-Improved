@@ -25,7 +25,22 @@ struct ContentView: View {
     
     // MARK: - Body
     
+    @ViewBuilder
     var body: some View {
+        switch ScreenshotDemoMode.scene {
+        case .challengeJourney:
+            ChallengesView(store: challenges)
+        case .masterEveryAnomaly:
+            HowToPlayView(
+                initialMode: .anomaly,
+                startsAtAnomalyGuide: true
+            )
+        default:
+            gameContent
+        }
+    }
+
+    private var gameContent: some View {
         HStack {
             Spacer()
             VStack {

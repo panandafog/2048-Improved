@@ -152,6 +152,22 @@ final class Field: ObservableObject {
         refillAnomalyDeckIfNeeded()
         notifyChange()
     }
+
+    func loadSample(
+        _ sampleCells: [SampleBoardCell],
+        nextAnomalyKind: AnomalyKind
+    ) {
+        cells = Set(sampleCells.map {
+            FieldCell(
+                value: $0.value,
+                coordinate: $0.coordinate,
+                kind: $0.kind
+            )
+        })
+        anomalyDeck = [nextAnomalyKind]
+        lastAnomalyKind = nil
+        notifyChange()
+    }
 }
 
 private extension Field {

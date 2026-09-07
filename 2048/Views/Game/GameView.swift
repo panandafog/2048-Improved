@@ -9,6 +9,10 @@ import SwiftUI
 
 struct GameView: View {
     // MARK: - State
+
+#if os(iOS)
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+#endif
     
     @StateObject var game: GameModel
     @StateObject private var inputController = GameInputController()
@@ -53,6 +57,14 @@ struct GameView: View {
         game.mode == .anomaly
             ? Self.anomalyMinFieldSize
             : Self.classicMinFieldSize
+    }
+
+    private var maximumFieldSize: CGFloat {
+#if os(iOS)
+        horizontalSizeClass == .regular ? 720 : Self.maxFieldSize
+#else
+        Self.maxFieldSize
+#endif
     }
     
     private var bottomControlsHeight: CGFloat {
@@ -105,7 +117,7 @@ struct GameView: View {
                 )
                 
                 HStack {
-                    TitleView()
+                    TitleView(title: game.mode.title)
                     Spacer()
                     ScoreView(kind: .current, value: game.score)
                     ScoreView(kind: .best, value: game.bestScore)
@@ -159,9 +171,9 @@ struct GameView: View {
         }
         .frame(
             minWidth: minimumFieldSize,
-            maxWidth: Self.maxFieldSize,
+            maxWidth: maximumFieldSize,
             minHeight: minimumFieldSize + notFieldHeight,
-            maxHeight: Self.maxFieldSize + notFieldHeight
+            maxHeight: maximumFieldSize + notFieldHeight
         )
         .background(Color.gameForeground)
 #if !os(tvOS)

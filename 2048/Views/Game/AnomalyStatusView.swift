@@ -11,10 +11,6 @@ struct AnomalyStatusView: View {
     var body: some View {
         VStack(spacing: AnomalyStatusLayout.spacing) {
             HStack {
-                Label("GameMode.Anomaly".localized, systemImage: "sparkles")
-                    .font(AnomalyStatusLayout.font)
-                    .foregroundColor(.labelDark)
-
                 Spacer()
 
                 if let kind = game.nextAnomalyKind,

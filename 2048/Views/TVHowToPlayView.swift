@@ -14,14 +14,18 @@ struct TVHowToPlayView: View {
     @FocusState private var isModePickerFocused: Bool
 
     private let initialMode: GameMode
+    private let initialPage: Int
     let onExitCommand: (() -> Void)?
 
     init(
         initialMode: GameMode = .classic,
+        initialPage: Int = 0,
         onExitCommand: (() -> Void)? = nil
     ) {
         self.initialMode = initialMode
+        self.initialPage = initialPage
         _selectedMode = State(initialValue: initialMode)
+        _page = State(initialValue: initialPage)
         self.onExitCommand = onExitCommand
     }
 
@@ -50,8 +54,8 @@ struct TVHowToPlayView: View {
         .onExitCommand(perform: onExitCommand)
         .onAppear {
             selectedMode = initialMode
-            page = 0
-            isModePickerFocused = true
+            page = min(max(initialPage, 0), pageCount - 1)
+            isModePickerFocused = initialPage == 0
         }
     }
 }

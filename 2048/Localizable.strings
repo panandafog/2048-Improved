@@ -6,6 +6,8 @@
   
 */
 
+"App.Name" = "Anomaly Merge";
+
 "Alert.NewGame.Title" = "Start new game?";
 "Alert.Victory.Title" = "Victory!!! 🎉🎉🎉";
 "Alert.Victory.Button.NewGame" = "Start new game";
@@ -72,7 +74,7 @@
 "Challenge.Score10000.Title" = "Five Figures";
 "Challenge.Score10000.Description" = "Score 10,000 points in a Classic 4x4 game";
 "Challenge.Tile2048.Title" = "Journey Complete";
-"Challenge.Tile2048.Description" = "Create the legendary 2,048 tile in a Classic 4x4 game";
+"Challenge.Tile2048.Description" = "Complete the full tile journey in a Classic 4x4 game";
 
 "HowToPlay.Overview.iOS" = "Swipe in any direction to slide every tile. Equal numbers merge and add to your score. Build a 2,048 tile to win.";
 "HowToPlay.Overview.macOS" = "Swipe or use the arrow keys to slide every tile. Equal numbers merge and add to your score. Build a 2,048 tile to win.";

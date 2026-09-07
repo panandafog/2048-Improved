@@ -11,9 +11,14 @@ struct HowToPlayView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var selectedMode: GameMode
     private let initialMode: GameMode
+    private let startsAtAnomalyGuide: Bool
 
-    init(initialMode: GameMode = .classic) {
+    init(
+        initialMode: GameMode = .classic,
+        startsAtAnomalyGuide: Bool = false
+    ) {
         self.initialMode = initialMode
+        self.startsAtAnomalyGuide = startsAtAnomalyGuide
         _selectedMode = State(initialValue: initialMode)
     }
 
@@ -27,23 +32,43 @@ struct HowToPlayView: View {
                 .frame(maxWidth: HowToPlayLayout.contentMaxWidth)
                 .padding(.horizontal, HowToPlayLayout.horizontalContentPadding)
 
-            ScrollView {
-                VStack(spacing: HowToPlayLayout.contentSpacing) {
-                    HowToPlayOverviewView(
-                        mode: selectedMode,
-                        instructions: instructions
-                    )
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack(spacing: HowToPlayLayout.contentSpacing) {
+                        HowToPlayOverviewView(
+                            mode: selectedMode,
+                            instructions: instructions
+                        )
 
-                    if selectedMode == .anomaly {
-                        AnomalyGuideView()
+                        if selectedMode == .anomaly {
+                            AnomalyGuideView()
+                                .id(HowToPlayScrollTarget.anomalyGuide)
+                        }
+                    }
+                    .frame(maxWidth: HowToPlayLayout.contentMaxWidth)
+                    .padding(.horizontal, HowToPlayLayout.horizontalContentPadding)
+                    .padding(
+                        .bottom,
+                        startsAtAnomalyGuide
+                            ? HowToPlayLayout.screenshotScrollBottomPadding
+                            : HowToPlayLayout.scrollContentBottomPadding
+                    )
+                    .frame(maxWidth: .infinity)
+                }
+                .ignoresSafeArea(edges: [.horizontal, .bottom])
+                .onAppear {
+                    guard startsAtAnomalyGuide else {
+                        return
+                    }
+
+                    DispatchQueue.main.async {
+                        proxy.scrollTo(
+                            HowToPlayScrollTarget.anomalyGuide,
+                            anchor: .top
+                        )
                     }
                 }
-                .frame(maxWidth: HowToPlayLayout.contentMaxWidth)
-                .padding(.horizontal, HowToPlayLayout.horizontalContentPadding)
-                .padding(.bottom, HowToPlayLayout.scrollContentBottomPadding)
-                .frame(maxWidth: .infinity)
             }
-            .ignoresSafeArea(edges: [.horizontal, .bottom])
         }
         .padding(.top, HowToPlayLayout.verticalContentPadding)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -56,6 +81,10 @@ struct HowToPlayView: View {
             selectedMode = initialMode
         }
     }
+}
+
+private enum HowToPlayScrollTarget {
+    static let anomalyGuide = "anomaly-guide"
 }
 
 private extension HowToPlayView {
@@ -158,7 +187,7 @@ struct HowToPlayBoardPreview: View {
                     }
                 }
 
-                ForEach(previewCells) { cell in
+                ForEach(SampleBoard.cells(fieldSize: fieldSize, mode: mode)) { cell in
                     FieldCellView(
                         value: cell.value,
                         kind: cell.kind,
@@ -175,77 +204,6 @@ struct HowToPlayBoardPreview: View {
             .cornerRadius(FieldLayout.cornerRadius)
         }
         .accessibilityHidden(true)
-    }
-}
-
-private extension HowToPlayBoardPreview {
-    var previewCells: [HowToPlayPreviewCell] {
-        let normalCells = (0 ..< fieldSize).flatMap { row in
-            (0 ..< fieldSize).compactMap { column -> HowToPlayPreviewCell? in
-                let flatIndex = row * fieldSize + column
-                guard flatIndex % HowToPlayBoard.emptyCellInterval != HowToPlayBoard.emptyCellOffset else {
-                    return nil
-                }
-
-                return HowToPlayPreviewCell(
-                    value: HowToPlayBoard.values[flatIndex % HowToPlayBoard.values.count],
-                    row: row,
-                    column: column
-                )
-            }
-        }
-
-        guard mode == .anomaly else {
-            return normalCells
-        }
-
-        let specialCells = [
-            HowToPlayPreviewCell(value: 0, row: 0, column: 1, kind: .wild),
-            HowToPlayPreviewCell(
-                value: 64,
-                row: fieldSize / 2,
-                column: fieldSize / 2,
-                kind: .frozen(remainingMoves: 5)
-            ),
-            HowToPlayPreviewCell(
-                value: 16,
-                row: fieldSize - 1,
-                column: fieldSize - 2,
-                kind: .power
-            ),
-            HowToPlayPreviewCell(
-                value: 128,
-                row: fieldSize - 1,
-                column: 0,
-                kind: .stone(remainingMoves: 4)
-            )
-        ]
-
-        let replacedCoordinates = Set(specialCells.map(\.coordinate))
-        return normalCells.filter {
-            !replacedCoordinates.contains($0.coordinate)
-        } + specialCells
-    }
-}
-
-private struct HowToPlayPreviewCell: Identifiable {
-    let value: Int
-    let coordinate: Coordinate
-    let kind: FieldCellKind
-
-    var id: Coordinate {
-        coordinate
-    }
-
-    init(
-        value: Int,
-        row: Int,
-        column: Int,
-        kind: FieldCellKind = .normal
-    ) {
-        self.value = value
-        coordinate = Coordinate(row: row, col: column)
-        self.kind = kind
     }
 }
 
@@ -383,21 +341,13 @@ private struct AnomalyGuideRow: View {
     }
 }
 
-private enum HowToPlayBoard {
-    static let values = [
-        2, 2, 4, 4, 8, 8, 16, 16,
-        32, 32, 64, 64, 128, 256, 512, 1024
-    ]
-    static let emptyCellInterval = 5
-    static let emptyCellOffset = 2
-}
-
 private enum HowToPlayLayout {
     static let contentMaxWidth: CGFloat = 640
     static let pickerMaxWidth: CGFloat = 360
     static let horizontalContentPadding: CGFloat = 20
     static let verticalContentPadding: CGFloat = 20
     static let scrollContentBottomPadding: CGFloat = 24
+    static let screenshotScrollBottomPadding: CGFloat = 320
     static let sectionSpacing: CGFloat = 20
     static let contentSpacing: CGFloat = 28
     static let minimumWidth: CGFloat = 320

@@ -8,8 +8,10 @@
 import SwiftUI
 
 struct TitleView: View {
+    let title: String
+
     var body: some View {
-        Text("2048")
+        Text(title)
             .font(.largeTitle)
             .foregroundColor(.labelDark)
     }
@@ -17,6 +19,6 @@ struct TitleView: View {
 
 struct TitleView_Previews: PreviewProvider {
     static var previews: some View {
-        TitleView()
+        TitleView(title: GameMode.anomaly.title)
     }
 }

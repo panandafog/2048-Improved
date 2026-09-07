@@ -17,7 +17,7 @@ struct FieldView: View {
     @State private var pendingValueUpdates: [UUID: DispatchWorkItem] = [:]
     @State private var pendingCellInsertions: [UUID: DispatchWorkItem] = [:]
     @State private var pendingFadeIns: [UUID: DispatchWorkItem] = [:]
-    
+
     // MARK: - Body
     
     var body: some View {
@@ -51,17 +51,35 @@ private extension FieldView {
         }
     }
     
+    @ViewBuilder
     func activeCells(metrics: FieldLayoutMetrics) -> some View {
-        ForEach(cells) { cell in
-            FieldCellView(value: cell.value, kind: cell.kind)
+        if ScreenshotDemoMode.isEnabled {
+            ForEach(game.field.cells.map(FieldCellSnapshot.init)) { cell in
+                FieldCellView(
+                    value: cell.value,
+                    kind: cell.kind,
+                    animationsEnabled: false
+                )
                 .compositingGroup()
                 .frame(width: metrics.cellSize.width, height: metrics.cellSize.height)
                 .position(metrics.center(for: cell.coordinate))
-                .opacity(cell.isFadingIn ? FieldAnimation.hiddenOpacity : FieldAnimation.visibleOpacity)
-                .transition(.identity)
-        }
-        .onReceive(game.field.objectWillChange) { _ in
-            syncRenderedCells()
+            }
+        } else {
+            ForEach(cells) { cell in
+                FieldCellView(value: cell.value, kind: cell.kind)
+                    .compositingGroup()
+                    .frame(width: metrics.cellSize.width, height: metrics.cellSize.height)
+                    .position(metrics.center(for: cell.coordinate))
+                    .opacity(
+                        cell.isFadingIn
+                            ? FieldAnimation.hiddenOpacity
+                            : FieldAnimation.visibleOpacity
+                    )
+                    .transition(.identity)
+            }
+            .onReceive(game.field.objectWillChange) { _ in
+                syncRenderedCells()
+            }
         }
     }
 }
